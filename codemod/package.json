@@ -8,7 +8,8 @@
     "prestart": "npm run clean",
     "start": "node src/index.js",
     "build": "webpack --config webpack.config.build.js",
-    "types": "webpack --config webpack.config.types.js"
+    "collect-types": "webpack-dev-server --open --config webpack.config.types.js",
+    "apply-types": "typewiz-node ./output/Evaporate.ts"
   },
   "author": "Matheus Moreira",
   "license": "MIT",
@@ -19,10 +20,12 @@
     "ts-loader": "^6.2.1",
     "typescript": "^3.8.3",
     "typewiz-core": "^1.2.4",
+    "typewiz-node": "^1.2.4",
     "typewiz-webpack": "^1.2.4",
     "webpack": "^4.42.0",
     "webpack-bundle-analyzer": "^3.6.0",
-    "webpack-cli": "^3.3.11"
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
   },
   "dependencies": {
     "prettier": "^1.19.1"

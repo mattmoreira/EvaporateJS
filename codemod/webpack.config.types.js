@@ -1,19 +1,33 @@
-const { TypewizPlugin } = require('typewiz-webpack');
+const path = require('path');
+
+const { TypewizPlugin, typewizCollectorMiddleware } = require('typewiz-webpack');
 
 const CommonWebpack = require('./webpack.config.common');
 
+const typewizConfig = path.resolve(__dirname, './typewiz.json');
+
 const rules = [
-  ...CommonWebpack.module.rules,
   {
     test: /\.ts$/,
-    use: 'typewiz-webpack',
+    use: [
+      CommonWebpack.module.rules[0].use,
+      {
+        loader: 'typewiz-webpack',
+        options: { typewizConfig }
+      }
+    ],
     exclude: /node_modules/
   }
 ];
 
 module.exports = {
   ...CommonWebpack,
-  entry: './output/Evaporate.ts',
   plugins: [new TypewizPlugin()],
-  module: { rules }
+  module: { rules },
+  devServer: {
+    before: function(app) {
+      typewizCollectorMiddleware(app, 'collected-types.json');
+    },
+    contentBase: 'web'
+  }
 };
