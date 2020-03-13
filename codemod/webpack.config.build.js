@@ -9,20 +9,8 @@ if (process.argv.includes('--analyze')) {
 }
 
 module.exports = {
-  entry: './output/Evaporate.ts',
+  ...CommonWebpack,
   plugins,
-  module: {
-    rules: [
-      {
-        test: /\.ts$/,
-        use: 'ts-loader',
-        exclude: /node_modules/
-      }
-    ]
-  },
-  resolve: {
-    extensions: [ '.tsx', '.ts', '.js' ]
-  },
   output: {
     filename: 'bundle.js',
     library: 'Evaporate',
