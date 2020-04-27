@@ -22,6 +22,7 @@ const rules = [
 
 module.exports = {
   ...CommonWebpack,
+  mode: 'development',
   plugins: [new TypewizPlugin()],
   module: { rules },
   devServer: {
