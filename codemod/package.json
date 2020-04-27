@@ -5,8 +5,8 @@
   "main": "dist/bundle.js",
   "scripts": {
     "clean": "rm ./output/* || true",
-    "prestart": "npm run clean",
-    "start": "node src/index.js",
+    "start": "npm run collect-types",
+    "codemod": "npm run clean && node src/index.js",
     "build": "webpack --config webpack.config.build.js",
     "collect-types": "webpack-dev-server --open --config webpack.config.types.js",
     "apply-types": "typewiz-node ./output/Evaporate.ts"

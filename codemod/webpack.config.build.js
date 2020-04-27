@@ -1,11 +1,13 @@
-const path = require('path');
+const path = require('path')
 
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 
-const plugins = [];
+const CommonWebpack = require('./webpack.config.common')
+
+const plugins = []
 
 if (process.argv.includes('--analyze')) {
-  plugins.push(new BundleAnalyzerPlugin());
+  plugins.push(new BundleAnalyzerPlugin())
 }
 
 module.exports = {
@@ -19,4 +21,4 @@ module.exports = {
     globalObject: 'this',
     path: path.resolve(__dirname, 'dist')
   }
-};
+}
