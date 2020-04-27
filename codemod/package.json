@@ -9,7 +9,7 @@
     "codemod": "npm run clean && node src/index.js",
     "build": "webpack --config webpack.config.build.js",
     "collect-types": "webpack-dev-server --open --config webpack.config.types.js",
-    "apply-types": "typewiz-node ./output/Evaporate.ts"
+    "apply-types": "typewiz applyTypes collected-types.json"
   },
   "author": "Matheus Moreira",
   "license": "MIT",
