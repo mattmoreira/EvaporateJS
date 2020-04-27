@@ -1,10 +1,10 @@
-const path = require('path');
+const path = require('path')
 
-const { TypewizPlugin, typewizCollectorMiddleware } = require('typewiz-webpack');
+const { TypewizPlugin, typewizCollectorMiddleware } = require('typewiz-webpack')
 
-const CommonWebpack = require('./webpack.config.common');
+const CommonWebpack = require('./webpack.config.common')
 
-const typewizConfig = path.resolve(__dirname, './typewiz.json');
+const typewizConfig = path.resolve(__dirname, './typewiz.json')
 
 const rules = [
   {
@@ -18,7 +18,7 @@ const rules = [
     ],
     exclude: /node_modules/
   }
-];
+]
 
 module.exports = {
   ...CommonWebpack,
@@ -26,8 +26,8 @@ module.exports = {
   module: { rules },
   devServer: {
     before: function(app) {
-      typewizCollectorMiddleware(app, 'collected-types.json');
+      typewizCollectorMiddleware(app, 'collected-types.json')
     },
-    contentBase: 'web'
+    contentBase: 'dist'
   }
-};
+}
