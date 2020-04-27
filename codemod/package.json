@@ -19,6 +19,7 @@
     "recast": "^0.18.5",
     "ts-loader": "^6.2.1",
     "typescript": "^3.8.3",
+    "typewiz": "^1.2.4",
     "typewiz-core": "^1.2.4",
     "typewiz-node": "^1.2.4",
     "typewiz-webpack": "^1.2.4",
