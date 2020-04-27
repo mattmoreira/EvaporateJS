@@ -2,10 +2,9 @@ import { HistoryCache } from './HistoryCache'
 import { FileUpload } from './FileUpload'
 import { Global } from './Global'
 import {
-  PENDING,
+  EVAPORATE_STATUS,
   IMMUTABLE_OPTIONS,
   ACTIVE_STATUSES,
-  PAUSED,
   PAUSED_STATUSES
 } from './Constants'
 import {
@@ -20,15 +19,15 @@ import {
 class Evaporate {
   public config: any = {}
   public _instantiationError: any
-  public supported: any = false
-  public localTimeOffset: any = 0
+  public supported: boolean = false
+  public localTimeOffset: number = 0
   public pendingFiles: any = {}
-  public queuedFiles: any = []
-  public filesInProcess: any = []
-  public evaporatingCount: any = 0
+  public queuedFiles: Array<any> = []
+  public filesInProcess: Array<any> = []
+  public evaporatingCount: number = 0
 
   static getLocalTimeOffset(config: any): Promise<any> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve: () => any, reject: () => any) => {
       if (typeof config.localTimeOffset === 'number') {
         return resolve(config.localTimeOffset)
       }
@@ -65,10 +64,10 @@ class Evaporate {
   static create(config: any): Promise<any> {
     const evapConfig = extend({}, config)
 
-    return Evaporate.getLocalTimeOffset(evapConfig).then(offset => {
+    return Evaporate.getLocalTimeOffset(evapConfig).then((offset: number) => {
       evapConfig.localTimeOffset = offset
 
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve: () => any, reject: () => any) => {
         const e = new Evaporate(evapConfig)
 
         if (e.supported === true) {
@@ -168,7 +167,7 @@ class Evaporate {
     Global.historyCache = new HistoryCache(this.config.mockLocalStorage)
   }
 
-  startNextFile(reason) {
+  startNextFile(reason: string) {
     if (
       !this.queuedFiles.length ||
       this.evaporatingCount >= this.config.maxConcurrentParts
@@ -178,7 +177,7 @@ class Evaporate {
 
     const fileUpload = this.queuedFiles.shift()
 
-    if (fileUpload.status === PENDING) {
+    if (fileUpload.status === EVAPORATE_STATUS.PENDING) {
       Global.l.d(
         'Starting',
         decodeURIComponent(fileUpload.name),
@@ -202,7 +201,7 @@ class Evaporate {
     }
   }
 
-  fileCleanup(fileUpload) {
+  fileCleanup(fileUpload: FileUpload) {
     removeAtIndex(this.queuedFiles, fileUpload)
 
     if (removeAtIndex(this.filesInProcess, fileUpload)) {
@@ -213,7 +212,7 @@ class Evaporate {
     this.consumeRemainingSlots()
   }
 
-  queueFile(fileUpload) {
+  queueFile(fileUpload: FileUpload) {
     this.filesInProcess.push(fileUpload)
     this.queuedFiles.push(fileUpload)
 
@@ -222,14 +221,17 @@ class Evaporate {
     }
   }
 
-  add(file, pConfig) {
+  add(
+    file: { file: File; name: string; progress: (progress: any) => any },
+    pConfig: undefined
+  ) {
     const self = this
     let fileConfig
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve: () => any, reject: () => any) => {
       const c = extend(pConfig, {})
 
-      IMMUTABLE_OPTIONS.forEach(a => {
+      IMMUTABLE_OPTIONS.forEach((a: string) => {
         delete c[a]
       })
 
@@ -280,7 +282,7 @@ class Evaporate {
           },
           file,
           {
-            status: PENDING,
+            status: EVAPORATE_STATUS.PENDING,
             priority: 0,
             loadedBytes: 0,
             sizeBytes: file.file.size,
@@ -301,7 +303,7 @@ class Evaporate {
           self.fileCleanup(fileUpload)
           resolve(decodeURIComponent(fileUpload.name))
         },
-        reason => {
+        (reason: string) => {
           self.fileCleanup(fileUpload)
           reject(reason)
         }
@@ -378,7 +380,7 @@ class Evaporate {
       promises.push(
         Promise.reject('Cannot pause a file that has not been added.')
       )
-    } else if (file.status === PAUSED) {
+    } else if (file.status === EVAPORATE_STATUS.PAUSED) {
       promises.push(
         Promise.reject('Cannot pause a file that is already paused.')
       )
@@ -518,7 +520,7 @@ class Evaporate {
     return true
   }
 
-  evaporatingCnt(incr) {
+  evaporatingCnt(incr: number) {
     this.evaporatingCount = Math.max(0, this.evaporatingCount + incr)
     this.config.evaporateChanged(this, this.evaporatingCount)
   }

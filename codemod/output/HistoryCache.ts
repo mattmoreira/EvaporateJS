@@ -34,13 +34,13 @@ class HistoryCache {
       : undefined
   }
 
-  getItem(key) {
+  getItem(key: string) {
     if (this.cacheStore) {
       return this.cacheStore[key]
     }
   }
 
-  setItem(key, value) {
+  setItem(key: string, value: string) {
     if (this.cacheStore) {
       this.cacheStore[key] = value
     }

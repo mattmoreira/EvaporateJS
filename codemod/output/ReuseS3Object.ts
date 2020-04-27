@@ -1,11 +1,13 @@
 import { SignedS3AWSRequestWithRetryLimit } from './SignedS3AWSRequestWithRetryLimit'
+import { FileUpload } from './FileUpload'
+import { Request } from './Types'
 
 //http://docs.amazonwebservices.com/AmazonS3/latest/API/mpUploadComplete.html
 class ReuseS3Object extends SignedS3AWSRequestWithRetryLimit {
   public awsKey: any
 
-  constructor(fileUpload, awsKey) {
-    const request = {
+  constructor(fileUpload: FileUpload, awsKey) {
+    const request: Request = {
       method: 'HEAD',
       path: '',
       x_amz_headers: fileUpload.xAmzHeadersCommon,

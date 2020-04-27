@@ -1,6 +1,7 @@
 import { SignedS3AWSRequest } from './SignedS3AWSRequest'
 import { Global } from './Global'
-import { ABORTED } from './Constants'
+import { EVAPORATE_STATUS } from './Constants'
+import { Request } from './Types'
 
 const maxRetries = 1
 
@@ -10,7 +11,7 @@ class DeleteMultipartUpload extends SignedS3AWSRequest {
     fileUpload.info('will attempt to abort the upload')
     fileUpload.abortParts()
 
-    const request = {
+    const request: Request = {
       method: 'DELETE',
       path: `?uploadId=${fileUpload.uploadId}`,
       x_amz_headers: fileUpload.xAmzHeadersCommon,
@@ -22,7 +23,7 @@ class DeleteMultipartUpload extends SignedS3AWSRequest {
   }
 
   success() {
-    this.fileUpload.setStatus(ABORTED)
+    this.fileUpload.setStatus(EVAPORATE_STATUS.ABORTED)
     this.awsDeferred.resolve(this.currentXhr)
   }
 

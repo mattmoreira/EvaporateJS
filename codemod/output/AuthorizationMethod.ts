@@ -1,12 +1,13 @@
 import { SignedS3AWSRequest } from './SignedS3AWSRequest'
+import { FileUpload } from './FileUpload'
 
 class AuthorizationMethod {
-  fileUpload: any
+  fileUpload: FileUpload
   awsRequest: SignedS3AWSRequest
-  request: any = {}
+  request: XMLHttpRequest
   con: any
 
-  static makeSignParamsObject(params) {
+  static makeSignParamsObject(params: object) {
     const out = {}
 
     for (const param in params) {
@@ -31,7 +32,7 @@ class AuthorizationMethod {
     this.con = this.fileUpload.con
   }
 
-  getBaseUrl(stringToSign) {
+  getBaseUrl(stringToSign: string): string {
     const url = [
       this.con.signerUrl,
       '?to_sign=',

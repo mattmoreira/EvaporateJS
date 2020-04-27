@@ -11,7 +11,7 @@ class AwsSignatureV4 extends AwsSignature {
   }
 
   getPayload() {
-    return this.awsRequest.getPayload().then(data => {
+    return this.awsRequest.getPayload().then((data: ArrayBuffer) => {
       this.payload = data
     })
   }
@@ -68,15 +68,20 @@ class AwsSignatureV4 extends AwsSignature {
       })
     }
 
-    const sorted = encoded.sort((a, b) => {
-      if (a.name < b.name) {
-        return -1
-      } else if (a.name > b.name) {
-        return 1
-      }
+    const sorted = encoded.sort(
+      (
+        a: { name: string; value: string },
+        b: { name: string; value: string }
+      ) => {
+        if (a.name < b.name) {
+          return -1
+        } else if (a.name > b.name) {
+          return 1
+        }
 
-      return 0
-    })
+        return 0
+      }
+    )
 
     const result = []
 
@@ -103,7 +108,7 @@ class AwsSignatureV4 extends AwsSignature {
     const keys = []
     let i
 
-    function addHeader(name, value) {
+    function addHeader(name: string, value: string) {
       const key = name.toLowerCase()
       keys.push(key)
       canonicalHeaders[key] = value.replace(/\s+/g, ' ')
@@ -127,7 +132,7 @@ class AwsSignatureV4 extends AwsSignature {
       }
     }
 
-    const sortedKeys = keys.sort((a, b) => {
+    const sortedKeys = keys.sort((a: string, b: string) => {
       if (a < b) {
         return -1
       } else if (a > b) {
@@ -189,7 +194,7 @@ class AwsSignatureV4 extends AwsSignature {
     return this._cr
   }
 
-  setHeaders(xhr) {
+  setHeaders(xhr: XMLHttpRequest) {
     xhr.setRequestHeader('x-amz-content-sha256', this.getPayloadSha256Content())
   }
 }

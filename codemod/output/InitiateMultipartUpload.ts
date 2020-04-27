@@ -1,12 +1,13 @@
 import { CancelableS3AWSRequest } from './CancelableS3AWSRequest'
 import { Global } from './Global'
+import { Request } from './Types'
 
 // see: http://docs.amazonwebservices.com/AmazonS3/latest/API/mpUploadInitiate.html
 class InitiateMultipartUpload extends CancelableS3AWSRequest {
   public awsKey: any
 
   constructor(fileUpload, awsKey) {
-    const request = {
+    const request: Request = {
       method: 'POST',
       path: '?uploads',
       step: 'initiate',

@@ -1,5 +1,6 @@
 import { SignedS3AWSRequestWithRetryLimit } from './SignedS3AWSRequestWithRetryLimit'
 import { Global } from './Global'
+import { Request } from './Types'
 
 //http://docs.amazonwebservices.com/AmazonS3/latest/API/mpUploadListParts.html
 class ResumeInterruptedUpload extends SignedS3AWSRequestWithRetryLimit {
@@ -11,7 +12,7 @@ class ResumeInterruptedUpload extends SignedS3AWSRequestWithRetryLimit {
     this.updateRequest(this.setupRequest(0))
   }
 
-  setupRequest(partNumberMarker) {
+  setupRequest(partNumberMarker: number) {
     const msg = [
       'setupRequest() for uploadId:',
       this.fileUpload.uploadId,
@@ -24,7 +25,7 @@ class ResumeInterruptedUpload extends SignedS3AWSRequestWithRetryLimit {
     this.awsKey = this.fileUpload.name
     this.partNumberMarker = partNumberMarker
 
-    const request = {
+    const request: Request = {
       method: 'GET',
       path: ['?uploadId=', this.fileUpload.uploadId].join(''),
       query_string: `&part-number-marker=${partNumberMarker}`,

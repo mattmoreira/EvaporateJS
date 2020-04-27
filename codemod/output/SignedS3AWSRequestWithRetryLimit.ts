@@ -12,7 +12,7 @@ class SignedS3AWSRequestWithRetryLimit extends CancelableS3AWSRequest {
     }
   }
 
-  errorHandler(reason) {
+  errorHandler(reason: string) {
     if (this.attempts > this.maxRetries) {
       const msg = [
         'MaxRetries exceeded. Will re-upload file id ',

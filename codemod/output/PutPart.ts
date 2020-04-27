@@ -1,16 +1,8 @@
 import { SignedS3AWSRequest } from './SignedS3AWSRequest'
 import { Global } from './Global'
-import {
-  PARTS_MONITOR_INTERVAL_MS,
-  COMPLETE,
-  ABORTED,
-  PAUSED,
-  CANCELED,
-  EVAPORATING,
-  ERROR,
-  PAUSING
-} from './Constants'
+import { PARTS_MONITOR_INTERVAL_MS, EVAPORATE_STATUS } from './Constants'
 import { getSupportedBlobSlice } from './Utils'
+import { Request } from './Types'
 
 //http://docs.aws.amazon.com/AmazonS3/latest/API/mpUploadUploadPart.html
 class PutPart extends SignedS3AWSRequest {
@@ -34,7 +26,7 @@ class PutPart extends SignedS3AWSRequest {
       fileUpload.sizeBytes
     )
 
-    const request = {
+    const request: Request = {
       method: 'PUT',
       path: `?partNumber=${this.partNumber}&uploadId=${fileUpload.uploadId}`,
       step: `upload #${this.partNumber}`,
@@ -53,7 +45,7 @@ class PutPart extends SignedS3AWSRequest {
 
     return new Promise((resolve, reject) => {
       if (self.con.computeContentMd5 && !part.md5_digest) {
-        self.getPayload().then(data => {
+        self.getPayload().then((data: FileReader) => {
           const md5_digest = self.con.cryptoMd5Method(data)
 
           if (
@@ -73,7 +65,7 @@ class PutPart extends SignedS3AWSRequest {
       } else {
         resolve(part.md5_digest)
       }
-    }).then(md5_digest => {
+    }).then((md5_digest: string) => {
       if (md5_digest) {
         Global.l.d(self.request.step, 'MD5 digest:', md5_digest)
         self.request.md5_digest = md5_digest
@@ -93,8 +85,12 @@ class PutPart extends SignedS3AWSRequest {
 
   send() {
     if (
-      this.part.status !== COMPLETE &&
-      ![ABORTED, PAUSED, CANCELED].includes(this.fileUpload.status)
+      this.part.status !== EVAPORATE_STATUS.COMPLETE &&
+      ![
+        EVAPORATE_STATUS.ABORTED,
+        EVAPORATE_STATUS.PAUSED,
+        EVAPORATE_STATUS.CANCELED
+      ].includes(this.fileUpload.status)
     ) {
       Global.l.d(
         'uploadPart #',
@@ -102,7 +98,7 @@ class PutPart extends SignedS3AWSRequest {
         this.attempts === 1 ? 'submitting' : 'retrying'
       )
 
-      this.part.status = EVAPORATING
+      this.part.status = EVAPORATE_STATUS.EVAPORATING
       this.attempts += 1
       this.part.loadedBytesPrevious = null
       const self = this
@@ -124,7 +120,7 @@ class PutPart extends SignedS3AWSRequest {
     }
   }
 
-  onProgress(evt) {
+  onProgress(evt: ProgressEvent) {
     if (evt.loaded > 0) {
       const loadedNow = evt.loaded - this.part.loadedBytes
 
@@ -143,10 +139,13 @@ class PutPart extends SignedS3AWSRequest {
       clearInterval(self.stalledInterval)
 
       if (
-        ![EVAPORATING, ERROR, PAUSING, PAUSED].includes(
-          self.fileUpload.status
-        ) &&
-        self.part.status !== ABORTED &&
+        ![
+          EVAPORATE_STATUS.EVAPORATING,
+          EVAPORATE_STATUS.ERROR,
+          EVAPORATE_STATUS.PAUSING,
+          EVAPORATE_STATUS.PAUSED
+        ].includes(self.fileUpload.status) &&
+        self.part.status !== EVAPORATE_STATUS.ABORTED &&
         self.part.loadedBytes < this.size
       ) {
         if (lastLoaded === self.part.loadedBytes) {
@@ -178,7 +177,12 @@ class PutPart extends SignedS3AWSRequest {
   }
 
   errorExceptionStatus() {
-    return [CANCELED, ABORTED, PAUSED, PAUSING].includes(this.fileUpload.status)
+    return [
+      EVAPORATE_STATUS.CANCELED,
+      EVAPORATE_STATUS.ABORTED,
+      EVAPORATE_STATUS.PAUSED,
+      EVAPORATE_STATUS.PAUSING
+    ].includes(this.fileUpload.status)
   }
 
   delaySend() {
@@ -187,20 +191,20 @@ class PutPart extends SignedS3AWSRequest {
     setTimeout(this.send.bind(this), backOffWait)
   }
 
-  errorHandler(reason) {
+  errorHandler(reason: string) {
     clearInterval(this.stalledInterval)
 
     if (reason.match(/status:404/)) {
       const errMsg = `404 error on part PUT. The part and the file will abort. ${reason}`
       Global.l.w(errMsg)
       this.fileUpload.error(errMsg)
-      this.part.status = ABORTED
+      this.part.status = EVAPORATE_STATUS.ABORTED
       this.awsDeferred.reject(errMsg)
       return true
     }
 
     this.resetLoadedBytes()
-    this.part.status = ERROR
+    this.part.status = EVAPORATE_STATUS.ERROR
 
     if (!this.errorExceptionStatus()) {
       this.delaySend()
