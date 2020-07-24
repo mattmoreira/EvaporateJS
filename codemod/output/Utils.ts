@@ -221,7 +221,7 @@ function removeUpload(uploadKey: string): void {
   Global.historyCache.setItem('awsUploads', JSON.stringify(uploads))
 }
 
-function removeAtIndex(a: Array<any>, i: number) {
+function removeAtIndex(a: Array<any>, i: any) {
   const idx = a.indexOf(i)
 
   if (idx > -1) {
