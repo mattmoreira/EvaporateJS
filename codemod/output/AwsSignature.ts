@@ -15,11 +15,11 @@ class AwsSignature {
   canonicalRequest() {}
   setHeaders(xhr: XMLHttpRequest) {}
 
-  datetime(timeOffset: number) {
+  datetime(timeOffset: number): Date {
     return new Date(new Date().getTime() + timeOffset)
   }
 
-  dateString(timeOffset: number) {
+  dateString(timeOffset: number): string {
     return `${this.datetime(timeOffset)
       .toISOString()
       .slice(0, 19)

@@ -2,7 +2,7 @@ import { AwsSignature } from './AwsSignature'
 import { Global } from './Global'
 
 class AwsSignatureV2 extends AwsSignature {
-  authorizationString() {
+  authorizationString(): string {
     return ['AWS ', this.con.aws_key, ':', this.request.auth].join('')
   }
 
@@ -32,11 +32,11 @@ class AwsSignatureV2 extends AwsSignature {
     return result
   }
 
-  dateString(timeOffset) {
+  dateString(timeOffset): string {
     return this.datetime(timeOffset).toUTCString()
   }
 
-  getPayload() {
+  getPayload(): Promise<void> {
     return Promise.resolve()
   }
 }
