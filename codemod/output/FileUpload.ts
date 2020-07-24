@@ -23,6 +23,7 @@ import {
   removeUpload,
   elementText
 } from './Utils'
+import Evaporate from './Evaporate'
 
 class FileUpload {
   public fileTotalBytesUploaded: any = 0
@@ -35,7 +36,7 @@ class FileUpload {
   public evaporate: any
   public localTimeOffset: any = 0
   public deferredCompletion: any
-  public id: any
+  public id: string
   public name: any
   public signParams: any
   public loaded: any = 0
@@ -62,7 +63,7 @@ class FileUpload {
   public cancelled: any
   public uploadInitiated: any
 
-  constructor(file, con, evaporate) {
+  constructor(file, con, evaporate: Evaporate) {
     this.con = extend({}, con)
     this.evaporate = evaporate
     this.localTimeOffset = evaporate.localTimeOffset
@@ -231,7 +232,7 @@ class FileUpload {
       })
   }
 
-  pause(force) {
+  pause(force?: boolean): Promise<any> {
     Global.l.d('pausing FileUpload, force:', !!force, this.id)
     let promises = []
     this.info('Pausing uploads...')

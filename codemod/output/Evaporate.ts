@@ -24,12 +24,12 @@ import { UploadFileConfig } from './EvaporateUploadFileInterface'
 import { EvaporateValidationEnum } from './EvaporateValidationEnum'
 
 class Evaporate {
-  public config: any = {}
+  public config: CreateConfig = null
   public _instantiationError: EvaporateValidationEnum
   public supported: boolean = false
   public localTimeOffset: number = 0
-  public pendingFiles: any = {}
-  public queuedFiles: Array<any> = []
+  public pendingFiles: { [key: string]: FileUpload } = {}
+  public queuedFiles: Array<FileUpload> = []
   public filesInProcess: Array<any> = []
   public evaporatingCount: number = 0
 
@@ -138,7 +138,7 @@ class Evaporate {
         abortCompletionThrottlingMs: 1000
       },
       config
-    )
+    ) as CreateConfig
 
     if (typeof window !== 'undefined' && window.console) {
       Global.l = window.console
@@ -190,7 +190,7 @@ class Evaporate {
       return
     }
 
-    const fileUpload = this.queuedFiles.shift()
+    const fileUpload: FileUpload = this.queuedFiles.shift()
 
     if (fileUpload.status === EVAPORATE_STATUS.PENDING) {
       Global.l.d(
@@ -359,7 +359,7 @@ class Evaporate {
     return Promise.all(promises)
   }
 
-  _cancelOne(id) {
+  _cancelOne(id: string) {
     const promise = []
 
     if (this.pendingFiles[id]) {
@@ -371,14 +371,16 @@ class Evaporate {
     return Promise.all(promise)
   }
 
-  pause(id, options = {} as any) {
-    const force = typeof options.force === 'undefined' ? false : options.force
+  pause(id: string, options = {} as any): Promise<any> {
+    const force: boolean =
+      typeof options.force === 'undefined' ? false : options.force
+
     return typeof id === 'undefined'
       ? this._pauseAll(force)
       : this._pauseOne(id, force)
   }
 
-  _pauseAll(force) {
+  _pauseAll(force: boolean): Promise<any> {
     Global.l.d('Pausing all file uploads')
     const promises = []
 
@@ -395,7 +397,7 @@ class Evaporate {
     return Promise.all(promises)
   }
 
-  _pauseOne(id, force) {
+  _pauseOne(id: string, force: boolean) {
     const promises = []
     const file = this.pendingFiles[id]
 
@@ -416,13 +418,13 @@ class Evaporate {
     return Promise.all(promises)
   }
 
-  _pause(fileUpload, force, promises) {
+  _pause(fileUpload: FileUpload, force: boolean, promises): void {
     promises.push(fileUpload.pause(force))
     removeAtIndex(this.filesInProcess, fileUpload)
     removeAtIndex(this.queuedFiles, fileUpload)
   }
 
-  resume(id) {
+  resume(id: string): Promise<string[] | void> {
     return typeof id === 'undefined' ? this._resumeAll() : this._resumeOne(id)
   }
 
@@ -442,7 +444,7 @@ class Evaporate {
     return Promise.resolve()
   }
 
-  _resumeOne(id) {
+  _resumeOne(id: string): Promise<string[]> {
     const file = this.pendingFiles[id]
     const promises = []
 
@@ -459,14 +461,14 @@ class Evaporate {
     return Promise.all(promises)
   }
 
-  resumeFile(fileUpload) {
+  resumeFile(fileUpload: FileUpload): void {
     fileUpload.resume()
     this.queueFile(fileUpload)
   }
 
   forceRetry() {}
 
-  consumeRemainingSlots() {
+  consumeRemainingSlots(): void {
     let avail = this.config.maxConcurrentParts - this.evaporatingCount
 
     if (!avail) {
@@ -543,7 +545,7 @@ class Evaporate {
     return EvaporateValidationEnum.OK
   }
 
-  evaporatingCnt(incr: number) {
+  evaporatingCnt(incr: number): void {
     this.evaporatingCount = Math.max(0, this.evaporatingCount + incr)
     this.config.evaporateChanged(this, this.evaporatingCount)
   }
