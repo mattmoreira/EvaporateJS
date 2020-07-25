@@ -11,19 +11,6 @@ export interface FileUploadStats {
   fileSize: number
 }
 
-export interface FileS3Part {
-  awsRequest?: PutPart
-  isEmpty: boolean
-  loadedBytes: number
-  loadedBytesPrevious?: number
-  md5_digest?: string
-  partNumber: number
-  status: EVAPORATE_STATUS
-  eTag?: string
-  size?: number
-  LastModified?: string
-}
-
 export interface FileUploadInterface {
   eTag?: string
   completedAt?: string

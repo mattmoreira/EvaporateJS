@@ -24,17 +24,20 @@ import {
   elementText
 } from './Utils'
 import Evaporate from './Evaporate'
-import {
-  FileUploadInterface,
-  FileS3Part,
-  FileUploadStats
-} from './FileUploadInterface'
+import { FileUploadInterface, FileUploadStats } from './FileUploadInterface'
 import { CreateConfig } from './EvaporateCreateConfigInterface'
+import {
+  S3Part,
+  CompletedS3Part,
+  S3File,
+  InitialS3Part,
+  StartedS3Part
+} from './FileS3PartInterface'
 
 class FileUpload {
   public fileTotalBytesUploaded: any = 0
-  public s3Parts: FileS3Part[]
-  public partsOnS3: FileS3Part[] = []
+  public s3Parts: S3Part[]
+  public partsOnS3: S3File[] = []
   public partsInProcess: number[] = []
   public partsToUpload: number[] = []
   public numParts: number = -1
@@ -63,6 +66,7 @@ class FileUpload {
   public resumed: any
   public file: any
   public complete: any
+  // UploadFileConfig.warn
   public warn: any
   public nameChanged: any
   public lastPartSatisfied: any = Promise.resolve('onStart')
@@ -121,7 +125,7 @@ class FileUpload {
     return stats
   }
 
-  onProgress() {
+  onProgress(): void {
     if (
       ![EVAPORATE_STATUS.ABORTED, EVAPORATE_STATUS.PAUSED].includes(this.status)
     ) {
@@ -321,7 +325,7 @@ class FileUpload {
     const partsDeferredPromises = []
     const self = this
 
-    function cleanUpAfterPart(s3Part: FileS3Part) {
+    function cleanUpAfterPart(s3Part: S3Part) {
       removeAtIndex(self.partsToUpload, s3Part.partNumber)
       removeAtIndex(self.partsInProcess, s3Part.partNumber)
 
@@ -330,7 +334,7 @@ class FileUpload {
       }
     }
 
-    function resolve(s3Part: FileS3Part) {
+    function resolve(s3Part: S3Part) {
       return () => {
         cleanUpAfterPart(s3Part)
 
@@ -344,7 +348,7 @@ class FileUpload {
       }
     }
 
-    function reject(s3Part: FileS3Part) {
+    function reject(s3Part: S3Part) {
       return () => {
         cleanUpAfterPart(s3Part)
       }
@@ -377,12 +381,8 @@ class FileUpload {
     return partsDeferredPromises
   }
 
-  makePart(
-    partNumber: number,
-    status: EVAPORATE_STATUS,
-    size: number
-  ): FileS3Part {
-    const s3Part = {
+  makePart(partNumber: number, status: EVAPORATE_STATUS, size: number): S3Part {
+    const s3Part: InitialS3Part = {
       status,
       loadedBytes: 0,
       loadedBytesPrevious: null,
@@ -390,7 +390,6 @@ class FileUpload {
       // issue #58
       isEmpty: size === 0,
 
-      md5_digest: null,
       partNumber
     }
 
@@ -448,13 +447,13 @@ class FileUpload {
     this.onProgress()
   }
 
-  removeUploadFile() {
+  removeUploadFile(): void {
     if (typeof this.file !== 'undefined') {
       removeUpload(uploadKey(this))
     }
   }
 
-  getUnfinishedFileUpload() {
+  getUnfinishedFileUpload(): void {
     const savedUploads = getSavedUploads(true)
     const u: FileUploadInterface = savedUploads[uploadKey(this)]
 
@@ -486,7 +485,7 @@ class FileUpload {
   }
 
   partSuccess(eTag: string, putRequest: PutPart): boolean {
-    const part: FileS3Part = putRequest.part
+    const part: CompletedS3Part = putRequest.part
     Global.l.d(putRequest.request.step, 'ETag:', eTag)
 
     if (part.isEmpty || eTag !== ETAG_OF_0_LENGTH_BLOB) {
@@ -532,12 +531,14 @@ class FileUpload {
       const partSize = parseInt(elementText(cp, 'Size'), 10)
       this.fileTotalBytesUploaded += partSize
 
-      this.partsOnS3.push({
+      const s3File: S3File = {
         eTag: elementText(cp, 'ETag').replace(/&quot;/g, '"'),
         partNumber: parseInt(elementText(cp, 'PartNumber'), 10),
         size: partSize,
         LastModified: elementText(cp, 'LastModified')
-      })
+      }
+
+      this.partsOnS3.push(s3File)
     }
 
     return elementText(partsXml, 'IsTruncated') === 'true'
@@ -578,7 +579,7 @@ class FileUpload {
     const completeDoc = []
     completeDoc.push('<CompleteMultipartUpload>')
 
-    this.s3Parts.forEach((part, partNumber) => {
+    this.s3Parts.forEach((part: CompletedS3Part, partNumber: number) => {
       if (partNumber > 0) {
         ;[
           '<Part><PartNumber>',
@@ -658,7 +659,7 @@ class FileUpload {
     return 0
   }
 
-  canStartPart(part: FileS3Part) {
+  canStartPart(part: S3Part): boolean {
     return (
       !this.partsInProcess.includes(part.partNumber) &&
       !part.awsRequest.errorExceptionStatus()
@@ -727,7 +728,7 @@ class FileUpload {
     this.makeParts(1)
 
     this.partsToUpload = []
-    const firstS3Part = this.s3Parts[1]
+    const firstS3Part = this.s3Parts[1] as StartedS3Part
 
     function reject(reason) {
       self.name = awsKey
