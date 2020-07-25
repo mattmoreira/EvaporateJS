@@ -4,7 +4,7 @@ import { Request } from './Types'
 
 // see: http://docs.amazonwebservices.com/AmazonS3/latest/API/mpUploadInitiate.html
 class InitiateMultipartUpload extends CancelableS3AWSRequest {
-  public awsKey: any
+  public awsKey: string
 
   constructor(fileUpload, awsKey) {
     const request: Request = {
@@ -20,7 +20,7 @@ class InitiateMultipartUpload extends CancelableS3AWSRequest {
     this.awsKey = awsKey
   }
 
-  success() {
+  success(): void {
     const match = this.currentXhr.response.match(
       new RegExp(this.request.response_match)
     )

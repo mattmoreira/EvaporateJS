@@ -4,15 +4,15 @@ import { Request } from './Types'
 
 //http://docs.amazonwebservices.com/AmazonS3/latest/API/mpUploadListParts.html
 class ResumeInterruptedUpload extends SignedS3AWSRequestWithRetryLimit {
-  public awsKey: any
-  public partNumberMarker: any = 0
+  public awsKey: string
+  public partNumberMarker: string | number = 0
 
   constructor(fileUpload) {
     super(fileUpload)
     this.updateRequest(this.setupRequest(0))
   }
 
-  setupRequest(partNumberMarker: number) {
+  setupRequest(partNumberMarker: string | number) {
     const msg = [
       'setupRequest() for uploadId:',
       this.fileUpload.uploadId,

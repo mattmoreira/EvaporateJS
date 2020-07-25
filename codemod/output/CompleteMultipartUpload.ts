@@ -18,7 +18,7 @@ class CompleteMultipartUpload extends CancelableS3AWSRequest {
     super(fileUpload, request)
   }
 
-  getPayload() {
+  getPayload(): Promise<string> {
     return Promise.resolve(this.fileUpload.getCompletedPayload())
   }
 }

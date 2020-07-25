@@ -107,7 +107,7 @@ class SignedS3AWSRequest {
     return false
   }
 
-  getPayload(): Promise<any> {
+  getPayload(): Promise<void> {
     return Promise.resolve(null)
   }
 

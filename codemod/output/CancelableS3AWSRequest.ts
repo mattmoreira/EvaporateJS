@@ -2,7 +2,7 @@ import { SignedS3AWSRequest } from './SignedS3AWSRequest'
 import { EVAPORATE_STATUS } from './Constants'
 
 class CancelableS3AWSRequest extends SignedS3AWSRequest {
-  errorExceptionStatus() {
+  errorExceptionStatus(): boolean {
     return [EVAPORATE_STATUS.ABORTED, EVAPORATE_STATUS.CANCELED].includes(
       this.fileUpload.status
     )

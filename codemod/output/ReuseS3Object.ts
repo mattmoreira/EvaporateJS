@@ -20,7 +20,7 @@ class ReuseS3Object extends SignedS3AWSRequestWithRetryLimit {
     fileUpload.info('will attempt to verify existence of the file')
   }
 
-  success() {
+  success(): void {
     const eTag = this.currentXhr.getResponseHeader('Etag')
 
     if (

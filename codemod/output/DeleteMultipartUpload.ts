@@ -22,12 +22,12 @@ class DeleteMultipartUpload extends SignedS3AWSRequest {
     super(fileUpload, request)
   }
 
-  success() {
+  success(): void {
     this.fileUpload.setStatus(EVAPORATE_STATUS.ABORTED)
     this.awsDeferred.resolve(this.currentXhr)
   }
 
-  errorHandler(reason) {
+  errorHandler(reason): boolean {
     if (this.attempts > maxRetries) {
       const msg = `Error aborting upload, Exceeded retries deleting the file upload: ${reason}`
       Global.l.w(msg)
