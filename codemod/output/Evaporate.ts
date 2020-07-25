@@ -145,10 +145,12 @@ class Evaporate {
     ) as CreateConfig
 
     if (typeof window !== 'undefined' && window.console) {
-      Global.l = window.console
-      Global.l.d = Global.l.log
-      Global.l.w = window.console.warn ? Global.l.warn : Global.l.d
-      Global.l.e = window.console.error ? Global.l.error : Global.l.d
+      Global.l = {
+        ...window.console,
+        d: Global.l.log,
+        w: window.console.warn ? Global.l.warn : Global.l.d,
+        e: window.console.error ? Global.l.error : Global.l.d
+      }
     }
 
     this._instantiationError = this.validateEvaporateOptions()
