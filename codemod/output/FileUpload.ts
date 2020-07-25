@@ -34,7 +34,7 @@ import {
   StartedS3Part
 } from './FileS3PartInterface'
 import { UploadFileConfig } from './EvaporateUploadFileInterface'
-import { Defer } from './Types'
+import { Defer, AnyDictionary } from './Types'
 
 class FileUpload
   implements
@@ -53,7 +53,7 @@ class FileUpload
   public deferredCompletion: Defer<void>
   public id: string
   public name: string
-  public signParams: any
+  public signParams: AnyDictionary
   public loaded: number = 0
   public sizeBytes: any
   public totalUploaded: number = 0

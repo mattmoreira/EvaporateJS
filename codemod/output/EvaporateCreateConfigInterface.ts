@@ -1,5 +1,6 @@
 import Evaporate from './Evaporate'
 import { IMMUTABLE_OPTIONS } from './Constants'
+import { AnyDictionary } from './Types'
 
 export interface CreateConfig {
   readableStreams?: boolean
@@ -32,13 +33,13 @@ export interface CreateConfig {
   signerUrl?: string
   sendCanonicalRequestToSignerUrl?: boolean
   s3FileCacheHoursAgo?: null | number
-  signParams?: object
-  signHeaders?: object
+  signParams?: AnyDictionary
+  signHeaders?: AnyDictionary
   customAuthMethod?:
     | null
     | ((
-        signParams: string,
-        signHeaders: string,
+        signParams: AnyDictionary,
+        signHeaders: AnyDictionary,
         stringToSign: string,
         signatureDateTime: string,
         canonicalRequest: string

@@ -150,7 +150,7 @@ class AwsSignatureV4 extends AwsSignature {
 
     const result = []
     const unsigned_headers = []
-    const not_signed = this.request.not_signed_headers || []
+    const not_signed = Object.keys(this.request.not_signed_headers) || []
     const signed_headers = []
 
     for (i = 0; i < not_signed.length; i++) {

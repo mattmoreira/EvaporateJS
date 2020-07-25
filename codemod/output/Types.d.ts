@@ -6,7 +6,7 @@ export type Request = {
   step: string
   success404?: boolean
   contentType?: string
-  not_signed_headers?: object
+  not_signed_headers?: AnyDictionary
   contentSha256?: string
   onProgress?: (this: XMLHttpRequest, ev: ProgressEvent<EventTarget>) => any
   dateString?: string
@@ -20,3 +20,5 @@ export type Defer<T> = {
   reject: (value: any) => void
   promise: Promise<T>
 }
+
+export type AnyDictionary = { [key: string]: any }
