@@ -122,7 +122,7 @@ class SignedS3AWSRequest {
     return encodeURIComponent(this.signer.stringToSign())
   }
 
-  canonicalRequest() {
+  canonicalRequest(): string | void {
     return this.signer.canonicalRequest()
   }
 
@@ -130,7 +130,7 @@ class SignedS3AWSRequest {
     payload,
     stringToSign: string,
     signatureDateTime: string
-  ): Promise<any> {
+  ): Promise<string> {
     const self = this
 
     return new Promise(resolve => {
@@ -258,7 +258,7 @@ class SignedS3AWSRequest {
     }, self.error.bind(self))
   }
 
-  send(): Promise<any> {
+  send(): Promise<XMLHttpRequest> {
     this.trySend()
     return this.awsDeferred.promise
   }
