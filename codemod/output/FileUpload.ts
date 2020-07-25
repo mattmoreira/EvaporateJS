@@ -55,9 +55,9 @@ class FileUpload
   public name: string
   public signParams: Dictionary<any>
   public loaded: number = 0
-  public sizeBytes: any
+  public sizeBytes: number
   public totalUploaded: number = 0
-  public startTime: any
+  public startTime: Date
   public status: EVAPORATE_STATUS = EVAPORATE_STATUS.PENDING
   // timeout?
   public progressInterval: NodeJS.Timeout
@@ -66,7 +66,7 @@ class FileUpload
   public eTag: string
   public abortedByUser: boolean
   public file: File
-  public lastPartSatisfied: any = Promise.resolve('onStart')
+  public lastPartSatisfied: Promise<string> = Promise.resolve('onStart')
 
   public contentType: string
 
@@ -127,7 +127,7 @@ class FileUpload
     }
 
     this.totalUploaded += this.loaded
-    const delta = (new Date().getTime() - this.startTime) / 1000
+    const delta = (new Date().getTime() - this.startTime.getTime()) / 1000
     const avgSpeed = this.totalUploaded / delta
     const remainingSize = this.sizeBytes - this.fileTotalBytesUploaded
 
