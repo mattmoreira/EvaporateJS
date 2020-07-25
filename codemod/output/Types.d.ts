@@ -8,11 +8,15 @@ export type Request = {
   contentType?: string
   not_signed_headers?: object
   contentSha256?: string
-  onProgress?: Function
+  onProgress?: (this: XMLHttpRequest, ev: ProgressEvent<EventTarget>) => any
+  dateString?: string
+  md5_digest?: string
+  response_match?: string
+  auth?: string
 }
 
-export type Defer = {
+export type Defer<T> = {
   resolve: (value: any) => void
   reject: (value: any) => void
-  promise: Promise<any>
+  promise: Promise<T>
 }

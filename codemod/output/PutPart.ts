@@ -326,7 +326,7 @@ class PutPart extends SignedS3AWSRequest {
     return Promise.resolve(blob)
   }
 
-  getStartedPromise(): Promise<void> {
+  getStartedPromise(): Promise<string> {
     return this.started.promise
   }
 }

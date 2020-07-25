@@ -10,26 +10,27 @@ import {
   authorizationMethod
 } from './Utils'
 import { FileUpload } from './FileUpload'
-import { CompleteMultipartUpload } from './CompleteMultipartUpload'
+
 import { AwsSignatureV2 } from './AwsSignatureV2'
 import { AwsSignatureV4 } from './AwsSignatureV4'
 import { Defer, Request } from './Types'
+import { CreateConfig } from './EvaporateCreateConfigInterface'
 
 class SignedS3AWSRequest {
   public fileUpload: FileUpload
-  public con: any
+  public con: CreateConfig
   public attempts: number = 1
   public localTimeOffset: number = 0
-  public awsDeferred: Defer
-  public started: Defer
+  public awsDeferred: Defer<XMLHttpRequest>
+  public started: Defer<string>
   public awsUrl: string
   public awsHost: string
-  public request: any
+  public request: Request
   public signer: AwsSignatureV2 | AwsSignatureV4
   public currentXhr: XMLHttpRequest
   public payloadPromise: any
 
-  constructor(fileUpload: FileUpload, request: Request) {
+  constructor(fileUpload: FileUpload, request?: Request) {
     this.fileUpload = fileUpload
     this.con = fileUpload.con
     this.localTimeOffset = this.fileUpload.localTimeOffset
@@ -56,50 +57,16 @@ class SignedS3AWSRequest {
     return path
   }
 
-  updateRequest(
-    request:
-      | {
-          method: string
-          not_signed_headers: {}
-          path: string
-          response_match: string
-          step: string
-          x_amz_headers: {}
-        }
-      | {
-          method: string
-          path: string
-          query_string: string
-          step: string
-          success404: boolean
-          x_amz_headers: null
-        }
-      | {
-          method: string
-          path: string
-          step: string
-          success404: boolean
-          x_amz_headers: null
-        }
-      | {
-          method: string
-          path: string
-          step: string
-          x_amz_headers: any
-          contentSha256: string
-          onProgress: any
-        }
-      | {}
-  ) {
+  updateRequest(request: Request): void {
     this.request = request
     this.signer = signingVersion(this)
   }
 
-  success() {
+  success(): void {
     this.awsDeferred.resolve(this.currentXhr)
   }
 
-  backOffWait() {
+  backOffWait(): number {
     return this.attempts === 1
       ? 0
       : 1000 *
@@ -109,7 +76,7 @@ class SignedS3AWSRequest {
           )
   }
 
-  error(reason: string) {
+  error(reason: string): void {
     if (this.errorExceptionStatus()) {
       return
     }
@@ -144,7 +111,7 @@ class SignedS3AWSRequest {
     return Promise.resolve(null)
   }
 
-  success_status(xhr: XMLHttpRequest) {
+  success_status(xhr: XMLHttpRequest): boolean {
     return (
       (xhr.status >= 200 && xhr.status <= 299) ||
       (this.request.success404 && xhr.status === 404)
@@ -159,7 +126,11 @@ class SignedS3AWSRequest {
     return this.signer.canonicalRequest()
   }
 
-  signResponse(payload, stringToSign, signatureDateTime): Promise<any> {
+  signResponse(
+    payload,
+    stringToSign: string,
+    signatureDateTime: string
+  ): Promise<any> {
     const self = this
 
     return new Promise(resolve => {
@@ -173,7 +144,7 @@ class SignedS3AWSRequest {
     })
   }
 
-  sendRequestToAWS(): Promise<any> {
+  sendRequestToAWS(): Promise<string> {
     const self = this
 
     return new Promise((resolve, reject) => {
@@ -254,7 +225,7 @@ class SignedS3AWSRequest {
   }
 
   //see: http://docs.amazonwebservices.com/AmazonS3/latest/dev/RESTAuthentication.html#ConstructingTheAuthenticationHeader
-  authorize() {
+  authorize(): Promise<any> {
     this.request.dateString = this.signer.dateString(this.localTimeOffset)
 
     this.request.x_amz_headers = extend(this.request.x_amz_headers, {
@@ -266,12 +237,12 @@ class SignedS3AWSRequest {
       .then(() => authorizationMethod(this).authorize())
   }
 
-  authorizationSuccess(authorization: string) {
+  authorizationSuccess(authorization: string): void {
     Global.l.d(this.request.step, 'signature:', authorization)
     this.request.auth = authorization
   }
 
-  trySend() {
+  trySend(): Promise<void> {
     const self = this
 
     return this.authorize().then((value: string) => {
@@ -287,7 +258,7 @@ class SignedS3AWSRequest {
     }, self.error.bind(self))
   }
 
-  send() {
+  send(): Promise<any> {
     this.trySend()
     return this.awsDeferred.promise
   }
