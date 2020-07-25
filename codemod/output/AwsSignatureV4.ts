@@ -1,6 +1,7 @@
 import { AwsSignature } from './AwsSignature'
 import { uri, awsUrl } from './Utils'
 import { Global } from './Global'
+import { PutPart } from './PutPart'
 
 class AwsSignatureV4 extends AwsSignature {
   public _cr: string
@@ -11,7 +12,9 @@ class AwsSignatureV4 extends AwsSignature {
   }
 
   getPayload(): Promise<void> {
-    return this.awsRequest.getPayload().then((data: ArrayBuffer) => {
+    const awsRequest = this.awsRequest as PutPart
+
+    return awsRequest.getPayload().then((data: ArrayBuffer) => {
       this.payload = data
     })
   }

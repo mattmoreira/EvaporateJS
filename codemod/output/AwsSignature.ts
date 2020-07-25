@@ -1,10 +1,12 @@
 import { CreateConfig } from './EvaporateCreateConfigInterface'
 import { Request } from './Types'
 import { SignedS3AWSRequest } from './SignedS3AWSRequest'
+import { PutPart } from './PutPart'
+import { CompleteMultipartUpload } from './CompleteMultipartUpload'
 
 class AwsSignature {
   request: Request
-  awsRequest: SignedS3AWSRequest
+  awsRequest: SignedS3AWSRequest | PutPart | CompleteMultipartUpload
   con: CreateConfig
   payload: ArrayBuffer
 
