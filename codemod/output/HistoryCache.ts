@@ -34,19 +34,19 @@ class HistoryCache {
       : undefined
   }
 
-  getItem(key: string) {
+  getItem(key: string): string {
     if (this.cacheStore) {
       return this.cacheStore[key]
     }
   }
 
-  setItem(key: string, value: string) {
+  setItem(key: string, value: string): void {
     if (this.cacheStore) {
       this.cacheStore[key] = value
     }
   }
 
-  removeItem(key) {
+  removeItem(key: string): boolean {
     if (this.cacheStore) {
       return delete this.cacheStore[key]
     }
