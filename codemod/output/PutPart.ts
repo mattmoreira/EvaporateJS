@@ -6,8 +6,22 @@ import { Request } from './Types'
 import { FileUpload } from './FileUpload'
 import { S3Part, StartedS3Part, CompletedS3Part } from './FileS3PartInterface'
 
+type PartialSignedS3AWSRequest = new (fileUpload: FileUpload) => {
+  [P in Exclude<
+    keyof SignedS3AWSRequest,
+    | 'send'
+    | 'sendRequestToAWS'
+    | 'getPayload'
+    | 'success'
+    | 'errorExceptionStatus'
+    | 'errorHandler'
+  >]: SignedS3AWSRequest[P]
+}
+
+const PartialSignedS3AWSRequest: PartialSignedS3AWSRequest = SignedS3AWSRequest
+
 //http://docs.aws.amazon.com/AmazonS3/latest/API/mpUploadUploadPart.html
-class PutPart extends SignedS3AWSRequest {
+class PutPart extends PartialSignedS3AWSRequest {
   public part: S3Part
   public partNumber: number
   public start: number = 0
