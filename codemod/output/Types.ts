@@ -21,6 +21,6 @@ export type Defer<T> = {
   promise: Promise<T>
 }
 
-interface Dictionary<T> {
+export interface Dictionary<T> {
   [Key: string]: T
 }
