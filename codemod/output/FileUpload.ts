@@ -83,7 +83,7 @@ class FileUpload {
     this.signParams = con.signParams
   }
 
-  updateLoaded(loadedNow: number) {
+  updateLoaded(loadedNow: number): void {
     this.loaded += loadedNow
     this.fileTotalBytesUploaded += loadedNow
   }
