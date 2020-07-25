@@ -533,12 +533,15 @@ class FileUpload
     }
   }
 
-  listPartsSuccess(listPartsRequest, partsXml: string): string | undefined {
+  listPartsSuccess(
+    listPartsRequest: ResumeInterruptedUpload,
+    partsXml: string
+  ): number | undefined {
     this.info(
       'uploadId',
       this.uploadId,
       'is not complete. Fetching parts from part marker',
-      listPartsRequest.partNumberMarker
+      listPartsRequest.partNumberMarker.toString()
     )
 
     partsXml = partsXml.replace(/(\r\n|\n|\r)/gm, '') // strip line breaks to ease the regex requirements
@@ -565,7 +568,7 @@ class FileUpload
     }
 
     return elementText(partsXml, 'IsTruncated') === 'true'
-      ? elementText(partsXml, 'NextPartNumberMarker')
+      ? parseInt(elementText(partsXml, 'NextPartNumberMarker'))
       : undefined
   }
 
