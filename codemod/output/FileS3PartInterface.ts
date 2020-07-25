@@ -1,11 +1,6 @@
 import { PutPart } from './PutPart'
 import { EVAPORATE_STATUS } from './Constants'
 
-// partNumber
-// eTag
-// size
-// LastModified
-
 interface S3PartDetail {
   awsRequest?: PutPart
   isEmpty: boolean
