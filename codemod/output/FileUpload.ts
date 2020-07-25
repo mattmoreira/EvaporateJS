@@ -59,7 +59,7 @@ class FileUpload
   public totalUploaded: number = 0
   public startTime: Date
   public status: EVAPORATE_STATUS = EVAPORATE_STATUS.PENDING
-  // timeout?
+
   public progressInterval: NodeJS.Timeout
   public uploadId: string
   public firstMd5Digest: string
@@ -69,6 +69,7 @@ class FileUpload
   public lastPartSatisfied: Promise<string> = Promise.resolve('onStart')
 
   public contentType: string
+  public awsKey: string
 
   constructor(file: UploadFileConfig, con: CreateConfig, evaporate: Evaporate) {
     this.con = extend({}, con) as CreateConfig
