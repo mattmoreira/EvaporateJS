@@ -446,7 +446,7 @@ class FileUpload
     saveUpload(fileKey, newUpload)
   }
 
-  updateUploadFile(updates: FileUploadInterface): void {
+  updateUploadFile(updates: Partial<FileUploadInterface>): void {
     const fileKey = uploadKey(this)
     const uploads = getSavedUploads()
     const upload = extend({}, uploads[fileKey], updates) as FileUploadInterface
