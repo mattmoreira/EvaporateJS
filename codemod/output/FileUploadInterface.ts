@@ -1,6 +1,3 @@
-import { PutPart } from './PutPart'
-import { EVAPORATE_STATUS } from './Constants'
-
 export interface FileUploadStats {
   speed: number
   readableSpeed: string
@@ -22,6 +19,36 @@ export interface FileUploadInterface {
   firstMd5Digest?: string
   lastModifiedDate: string
   partSize: number
-  signParams: {}
+  signParams: { [key: string]: any }
   uploadId: string
 }
+
+interface FileUploadLogCallbacksInterface {
+  info: (...msg: string[]) => void
+  warn: (...msg: string[]) => void
+  error: (msg: string) => void
+}
+
+interface FileUploadLifecycleEventCallbacksInterface {
+  started: (file_key: string) => void
+  paused: (file_key?: string) => void
+  resumed: (file_key?: string) => void
+  pausing: (file_key?: string) => void
+  progress: (p: number, stats: FileUploadStats) => void
+  cancelled: () => void
+  complete: (
+    xhr: XMLHttpRequest,
+    awsObjectKey: string,
+    stats: FileUploadStats
+  ) => void
+}
+
+interface FileUploadEventCallbacksInterface {
+  beforeSigner?: (xhr: XMLHttpRequest, url: string) => void
+  uploadInitiated: (s3UploadId?: string) => void
+  nameChanged: (awsObjectKey: string) => void
+}
+
+export type FileUploadCallbacksInterface = FileUploadLogCallbacksInterface &
+  FileUploadLifecycleEventCallbacksInterface &
+  FileUploadEventCallbacksInterface

@@ -33,8 +33,9 @@ import {
   InitialS3Part,
   StartedS3Part
 } from './FileS3PartInterface'
+import { UploadFileConfig } from './EvaporateUploadFileInterface'
 
-class FileUpload {
+class FileUpload implements UploadFileConfig {
   public fileTotalBytesUploaded: any = 0
   public s3Parts: S3Part[]
   public partsOnS3: S3File[] = []
@@ -53,27 +54,17 @@ class FileUpload {
   public totalUploaded: any = 0
   public startTime: any
   public status: EVAPORATE_STATUS = EVAPORATE_STATUS.PENDING
-  public progress: any
   public progressInterval: any
-  public started: any
   public uploadId: string
   public firstMd5Digest: string
   public eTag: string
-  public info: any
   public abortedByUser: any
-  public pausing: any
-  public paused: any
-  public resumed: any
   public file: any
-  public complete: any
-  // UploadFileConfig.warn
-  public warn: any
-  public nameChanged: any
   public lastPartSatisfied: any = Promise.resolve('onStart')
-  public cancelled: any
-  public uploadInitiated: any
 
-  constructor(file, con: CreateConfig, evaporate: Evaporate) {
+  public contentType: string
+
+  constructor(file: UploadFileConfig, con: CreateConfig, evaporate: Evaporate) {
     this.con = extend({}, con) as CreateConfig
     this.evaporate = evaporate
     this.localTimeOffset = evaporate.localTimeOffset
@@ -82,6 +73,26 @@ class FileUpload {
     this.id = decodeURIComponent(`${this.con.bucket}/${this.name}`)
     this.signParams = con.signParams
   }
+
+  public nameChanged: (awsObjectKey: string) => void
+  public uploadInitiated: (s3UploadId?: string) => void
+  public beforeSigner?: (xhr: XMLHttpRequest, url: string) => void
+
+  public started: (file_key: string) => void
+  public progress: (p: number, stats: FileUploadStats) => void
+  public paused: (file_key?: string) => void
+  public resumed: (file_key?: string) => void
+  public pausing: (file_key?: string) => void
+  public cancelled: () => void
+  public complete: (
+    xhr: XMLHttpRequest,
+    awsObjectKey: string,
+    stats: FileUploadStats
+  ) => VoidFunction
+
+  public info: (...msg: string[]) => void
+  public warn: (...msg: string[]) => void
+  public error: (msg: string) => void
 
   updateLoaded(loadedNow: number): void {
     this.loaded += loadedNow
