@@ -1,7 +1,12 @@
+import { CreateConfig } from './EvaporateCreateConfigInterface'
+import { Request } from './Types'
+import { SignedS3AWSRequest } from './SignedS3AWSRequest'
+
 class AwsSignature {
-  request: any
-  awsRequest: any
-  con: any
+  request: Request
+  awsRequest: SignedS3AWSRequest
+  con: CreateConfig
+  payload: ArrayBuffer
 
   constructor(awsRequest) {
     this.awsRequest = awsRequest

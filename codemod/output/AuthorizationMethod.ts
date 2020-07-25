@@ -1,11 +1,13 @@
 import { SignedS3AWSRequest } from './SignedS3AWSRequest'
 import { FileUpload } from './FileUpload'
+import { Request } from './Types'
+import { CreateConfig } from './EvaporateCreateConfigInterface'
 
 class AuthorizationMethod {
   fileUpload: FileUpload
   awsRequest: SignedS3AWSRequest
-  request: XMLHttpRequest
-  con: any
+  request: Request
+  con: CreateConfig
 
   static makeSignParamsObject(params: object) {
     const out = {}
@@ -49,7 +51,7 @@ class AuthorizationMethod {
     return url.join('')
   }
 
-  authorize() {
+  authorize(): Promise<string> {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest()
       this.awsRequest.currentXhr = xhr

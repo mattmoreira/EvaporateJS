@@ -3,20 +3,20 @@ import { uri, awsUrl } from './Utils'
 import { Global } from './Global'
 
 class AwsSignatureV4 extends AwsSignature {
-  public _cr: any
-  public payload: any
+  public _cr: string
+  public payload: ArrayBuffer
 
-  error() {
+  error(): void {
     this._cr = undefined
   }
 
-  getPayload() {
+  getPayload(): Promise<void> {
     return this.awsRequest.getPayload().then((data: ArrayBuffer) => {
       this.payload = data
     })
   }
 
-  authorizationString() {
+  authorizationString(): string {
     const authParts = []
     const credentials = this.credentialString()
     const headers = this.canonicalHeaders()
@@ -30,7 +30,7 @@ class AwsSignatureV4 extends AwsSignature {
     return authParts.join(', ')
   }
 
-  stringToSign() {
+  stringToSign(): string {
     const signParts = []
     signParts.push('AWS4-HMAC-SHA256')
     signParts.push(this.request.dateString)
@@ -41,7 +41,7 @@ class AwsSignatureV4 extends AwsSignature {
     return result
   }
 
-  credentialString() {
+  credentialString(): string {
     const credParts = []
     credParts.push(this.request.dateString.slice(0, 8))
     credParts.push(this.con.awsRegion)
@@ -50,7 +50,7 @@ class AwsSignatureV4 extends AwsSignature {
     return credParts.join('/')
   }
 
-  canonicalQueryString() {
+  canonicalQueryString(): string {
     const qs = this.awsRequest.request.query_string || ''
     const search = uri([this.awsRequest.awsUrl, this.request.path, qs].join(''))
       .search
@@ -95,7 +95,7 @@ class AwsSignatureV4 extends AwsSignature {
     return result.join('&')
   }
 
-  getPayloadSha256Content() {
+  getPayloadSha256Content(): string {
     const result =
       this.request.contentSha256 ||
       this.con.cryptoHexEncodedHash256(this.payload || '')
@@ -103,7 +103,10 @@ class AwsSignatureV4 extends AwsSignature {
     return result
   }
 
-  canonicalHeaders() {
+  canonicalHeaders(): {
+    canonicalHeaders: string
+    signedHeaders: string
+  } {
     const canonicalHeaders = []
     const keys = []
     let i
@@ -166,7 +169,7 @@ class AwsSignatureV4 extends AwsSignature {
     }
   }
 
-  canonicalRequest() {
+  canonicalRequest(): string {
     if (typeof this._cr !== 'undefined') {
       return this._cr
     }
@@ -194,7 +197,7 @@ class AwsSignatureV4 extends AwsSignature {
     return this._cr
   }
 
-  setHeaders(xhr: XMLHttpRequest) {
+  setHeaders(xhr: XMLHttpRequest): void {
     xhr.setRequestHeader('x-amz-content-sha256', this.getPayloadSha256Content())
   }
 }
