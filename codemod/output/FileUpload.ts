@@ -592,7 +592,7 @@ class FileUpload
     })
   }
 
-  completeUpload() {
+  completeUpload(): Promise<void> {
     const self = this
 
     return new CompleteMultipartUpload(this).send().then(xhr => {
@@ -692,7 +692,7 @@ class FileUpload
     )
   }
 
-  uploadFile(awsKey: string) {
+  uploadFile(awsKey: string): Promise<void> {
     this.removeUploadFile()
     const self = this
 
@@ -709,7 +709,7 @@ class FileUpload
     })
   }
 
-  uploadParts() {
+  uploadParts(): Promise<XMLHttpRequest[]> {
     this.loaded = 0
     this.totalUploaded = 0
 
@@ -726,7 +726,7 @@ class FileUpload
     return Promise.all(promises)
   }
 
-  abortUpload() {
+  abortUpload(): Promise<void> {
     return new Promise((resolve: () => any, reject: () => any) => {
       if (typeof this.uploadId === 'undefined') {
         resolve()
@@ -741,13 +741,13 @@ class FileUpload
     }, this.deferredCompletion.reject.bind(this))
   }
 
-  resumeInterruptedUpload() {
+  resumeInterruptedUpload(): Promise<XMLHttpRequest> {
     return new ResumeInterruptedUpload(this)
       .send()
       .then(this.uploadParts.bind(this))
   }
 
-  reuseS3Object(awsKey: string) {
+  reuseS3Object(awsKey: string): Promise<void> {
     const self = this
 
     // Attempt to reuse entire uploaded object on S3
