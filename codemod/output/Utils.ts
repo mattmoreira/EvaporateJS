@@ -7,6 +7,7 @@ import { AwsSignatureV2 } from './AwsSignatureV2'
 import { SignedS3AWSRequest } from './SignedS3AWSRequest'
 import { FileUpload } from './FileUpload'
 import { Defer } from './Types'
+import { FileUploadInterface } from './FileUploadInterface'
 
 function signingVersion(
   awsRequest: SignedS3AWSRequest
@@ -163,7 +164,9 @@ function extend(obj1: object, obj2: object, obj3?: object): object {
   return obj1
 }
 
-function getSavedUploads(purge?: boolean) {
+function getSavedUploads(
+  purge?: boolean
+): { [key: string]: FileUploadInterface } {
   const uploads = JSON.parse(Global.historyCache.getItem('awsUploads') || '{}')
 
   if (purge) {
@@ -196,20 +199,7 @@ function uploadKey(fileUpload: FileUpload): string {
   ].join('-')
 }
 
-function saveUpload(
-  uploadKey: string,
-  upload: {
-    awsKey: any
-    bucket: any
-    uploadId: any
-    fileSize: any
-    fileType: any
-    lastModifiedDate: string
-    partSize: any
-    signParams: any
-    createdAt: string
-  }
-): void {
+function saveUpload(uploadKey: string, upload: FileUploadInterface): void {
   const uploads = getSavedUploads()
   uploads[uploadKey] = upload
   Global.historyCache.setItem('awsUploads', JSON.stringify(uploads))

@@ -24,32 +24,38 @@ import {
   elementText
 } from './Utils'
 import Evaporate from './Evaporate'
+import {
+  FileUploadInterface,
+  FileS3Part,
+  FileUploadStats
+} from './FileUploadInterface'
+import { CreateConfig } from './EvaporateCreateConfigInterface'
 
 class FileUpload {
   public fileTotalBytesUploaded: any = 0
-  public s3Parts: any = []
-  public partsOnS3: any = []
-  public partsInProcess: any = []
-  public partsToUpload: any = []
-  public numParts: any = -1
-  public con: any
-  public evaporate: any
+  public s3Parts: FileS3Part[]
+  public partsOnS3: FileS3Part[] = []
+  public partsInProcess: number[] = []
+  public partsToUpload: number[] = []
+  public numParts: number = -1
+  public con: CreateConfig
+  public evaporate: Evaporate
   public localTimeOffset: any = 0
   public deferredCompletion: any
   public id: string
-  public name: any
+  public name: string
   public signParams: any
   public loaded: any = 0
   public sizeBytes: any
   public totalUploaded: any = 0
   public startTime: any
-  public status: any = EVAPORATE_STATUS.PENDING
+  public status: EVAPORATE_STATUS = EVAPORATE_STATUS.PENDING
   public progress: any
   public progressInterval: any
   public started: any
-  public uploadId: any
-  public firstMd5Digest: any
-  public eTag: any
+  public uploadId: string
+  public firstMd5Digest: string
+  public eTag: string
   public info: any
   public abortedByUser: any
   public pausing: any
@@ -63,8 +69,8 @@ class FileUpload {
   public cancelled: any
   public uploadInitiated: any
 
-  constructor(file, con, evaporate: Evaporate) {
-    this.con = extend({}, con)
+  constructor(file, con: CreateConfig, evaporate: Evaporate) {
+    this.con = extend({}, con) as CreateConfig
     this.evaporate = evaporate
     this.localTimeOffset = evaporate.localTimeOffset
     this.deferredCompletion = defer()
@@ -78,7 +84,7 @@ class FileUpload {
     this.fileTotalBytesUploaded += loadedNow
   }
 
-  progessStats() {
+  progessStats(): FileUploadStats {
     // Adapted from https://github.com/fkjaekel
     // https://github.com/TTLabs/EvaporateJS/issues/13
     if (this.fileTotalBytesUploaded === 0) {
@@ -127,7 +133,7 @@ class FileUpload {
     }
   }
 
-  startMonitor() {
+  startMonitor(): void {
     clearInterval(this.progressInterval)
     this.startTime = new Date()
     this.loaded = 0
@@ -139,24 +145,24 @@ class FileUpload {
     )
   }
 
-  stopMonitor() {
+  stopMonitor(): void {
     clearInterval(this.progressInterval)
   }
 
   // Evaporate proxies
-  startNextFile(reason: string) {
+  startNextFile(reason: string): void {
     this.evaporate.startNextFile(reason)
   }
 
-  evaporatingCnt(incr: number) {
+  evaporatingCnt(incr: number): void {
     this.evaporate.evaporatingCnt(incr)
   }
 
-  consumeRemainingSlots() {
+  consumeRemainingSlots(): void {
     this.evaporate.consumeRemainingSlots()
   }
 
-  getRemainingSlots() {
+  getRemainingSlots(): number {
     let evapCount = this.evaporate.evaporatingCount
 
     if (!this.partsInProcess.length && evapCount > 0) {
@@ -256,19 +262,19 @@ class FileUpload {
     })
   }
 
-  resume() {
+  resume(): void {
     this.status = EVAPORATE_STATUS.PENDING
     this.resumed()
   }
 
-  done() {
+  done(): void {
     clearInterval(this.progressInterval)
     this.startNextFile('file done')
     this.partsOnS3 = []
     this.s3Parts = []
   }
 
-  _startCompleteUpload(callComplete) {
+  _startCompleteUpload(callComplete: boolean) {
     return function() {
       const promise = callComplete ? this.completeUpload() : Promise.resolve()
       promise.then(this.deferredCompletion.resolve.bind(this))
@@ -310,33 +316,12 @@ class FileUpload {
     })
   }
 
-  makeParts(firstPart?) {
+  makeParts(firstPart?: number) {
     this.numParts = Math.ceil(this.sizeBytes / this.con.partSize) || 1 // issue #58
     const partsDeferredPromises = []
     const self = this
 
-    function cleanUpAfterPart(
-      s3Part:
-        | {
-            awsRequest: PutPart
-            eTag: null
-            isEmpty: boolean
-            loadedBytes: number
-            loadedBytesPrevious: null
-            md5_digest: string
-            partNumber: number
-            status: number
-          }
-        | {
-            awsRequest: PutPart
-            isEmpty: boolean
-            loadedBytes: number
-            loadedBytesPrevious: null
-            md5_digest: string
-            partNumber: number
-            status: number
-          }
-    ) {
+    function cleanUpAfterPart(s3Part: FileS3Part) {
       removeAtIndex(self.partsToUpload, s3Part.partNumber)
       removeAtIndex(self.partsInProcess, s3Part.partNumber)
 
@@ -345,15 +330,7 @@ class FileUpload {
       }
     }
 
-    function resolve(s3Part: {
-      awsRequest: PutPart
-      isEmpty: boolean
-      loadedBytes: number
-      loadedBytesPrevious: null
-      md5_digest: null
-      partNumber: number
-      status: number
-    }) {
+    function resolve(s3Part: FileS3Part) {
       return () => {
         cleanUpAfterPart(s3Part)
 
@@ -367,15 +344,7 @@ class FileUpload {
       }
     }
 
-    function reject(s3Part: {
-      awsRequest: PutPart
-      isEmpty: boolean
-      loadedBytes: number
-      loadedBytesPrevious: null
-      md5_digest: null
-      partNumber: number
-      status: number
-    }) {
+    function reject(s3Part: FileS3Part) {
       return () => {
         cleanUpAfterPart(s3Part)
       }
@@ -408,7 +377,11 @@ class FileUpload {
     return partsDeferredPromises
   }
 
-  makePart(partNumber: number, status: number, size: number) {
+  makePart(
+    partNumber: number,
+    status: EVAPORATE_STATUS,
+    size: number
+  ): FileS3Part {
     const s3Part = {
       status,
       loadedBytes: 0,
@@ -425,11 +398,11 @@ class FileUpload {
     return s3Part
   }
 
-  setStatus(s: number) {
+  setStatus(s: EVAPORATE_STATUS) {
     this.status = s
   }
 
-  createUploadFile() {
+  createUploadFile(): void {
     if (this.status === EVAPORATE_STATUS.ABORTED) {
       return
     }
@@ -451,14 +424,14 @@ class FileUpload {
     saveUpload(fileKey, newUpload)
   }
 
-  updateUploadFile(updates) {
+  updateUploadFile(updates): void {
     const fileKey = uploadKey(this)
     const uploads = getSavedUploads()
-    const upload = extend({}, uploads[fileKey], updates)
+    const upload = extend({}, uploads[fileKey], updates) as FileUploadInterface
     saveUpload(fileKey, upload)
   }
 
-  completeUploadFile(xhr) {
+  completeUploadFile(xhr: XMLHttpRequest): void {
     const uploads = getSavedUploads()
     const upload = uploads[uploadKey(this)]
 
@@ -483,7 +456,7 @@ class FileUpload {
 
   getUnfinishedFileUpload() {
     const savedUploads = getSavedUploads(true)
-    const u = savedUploads[uploadKey(this)]
+    const u: FileUploadInterface = savedUploads[uploadKey(this)]
 
     if (this.canRetryUpload(u)) {
       this.uploadId = u.uploadId
@@ -494,18 +467,7 @@ class FileUpload {
     }
   }
 
-  canRetryUpload(u: {
-    awsKey: string
-    bucket: string
-    createdAt: string
-    fileSize: number
-    fileType: string
-    firstMd5Digest: string
-    lastModifiedDate: string
-    partSize: number
-    signParams: {}
-    uploadId: string
-  }) {
+  canRetryUpload(u: FileUploadInterface): boolean {
     // Must be the same file name, file size, last_modified, file type as previous upload
     if (typeof u === 'undefined') {
       return false
@@ -523,8 +485,8 @@ class FileUpload {
     )
   }
 
-  partSuccess(eTag: string, putRequest: PutPart) {
-    const part = putRequest.part
+  partSuccess(eTag: string, putRequest: PutPart): boolean {
+    const part: FileS3Part = putRequest.part
     Global.l.d(putRequest.request.step, 'ETag:', eTag)
 
     if (part.isEmpty || eTag !== ETAG_OF_0_LENGTH_BLOB) {
@@ -549,7 +511,7 @@ class FileUpload {
     }
   }
 
-  listPartsSuccess(listPartsRequest, partsXml) {
+  listPartsSuccess(listPartsRequest, partsXml: string): string | undefined {
     this.info(
       'uploadId',
       this.uploadId,
@@ -583,7 +545,7 @@ class FileUpload {
       : undefined
   }
 
-  makePartsfromPartsOnS3() {
+  makePartsfromPartsOnS3(): void {
     if (!ACTIVE_STATUSES.includes(this.status)) {
       return
     }
@@ -612,7 +574,7 @@ class FileUpload {
     })
   }
 
-  getCompletedPayload() {
+  getCompletedPayload(): string {
     const completeDoc = []
     completeDoc.push('<CompleteMultipartUpload>')
 
@@ -634,7 +596,7 @@ class FileUpload {
     return completeDoc.join('')
   }
 
-  consumeSlots() {
+  consumeSlots(): number {
     if (this.partsToUpload.length === 0) {
       return -1
     }
@@ -696,15 +658,7 @@ class FileUpload {
     return 0
   }
 
-  canStartPart(part: {
-    awsRequest: PutPart
-    isEmpty: boolean
-    loadedBytes: number
-    loadedBytesPrevious: null
-    md5_digest: null
-    partNumber: number
-    status: number
-  }) {
+  canStartPart(part: FileS3Part) {
     return (
       !this.partsInProcess.includes(part.partNumber) &&
       !part.awsRequest.errorExceptionStatus()
@@ -766,7 +720,7 @@ class FileUpload {
       .then(this.uploadParts.bind(this))
   }
 
-  reuseS3Object(awsKey) {
+  reuseS3Object(awsKey: string) {
     const self = this
 
     // Attempt to reuse entire uploaded object on S3
