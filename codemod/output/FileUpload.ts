@@ -34,9 +34,14 @@ import {
   StartedS3Part
 } from './FileS3PartInterface'
 import { UploadFileConfig } from './EvaporateUploadFileInterface'
+import { Defer } from './Types'
 
-class FileUpload implements UploadFileConfig {
-  public fileTotalBytesUploaded: any = 0
+class FileUpload
+  implements
+    UploadFileConfig,
+    Pick<Evaporate, 'localTimeOffset'>,
+    Pick<CreateConfig, 'signParams'> {
+  public fileTotalBytesUploaded: number = 0
   public s3Parts: S3Part[]
   public partsOnS3: S3File[] = []
   public partsInProcess: number[] = []
@@ -44,22 +49,23 @@ class FileUpload implements UploadFileConfig {
   public numParts: number = -1
   public con: CreateConfig
   public evaporate: Evaporate
-  public localTimeOffset: any = 0
-  public deferredCompletion: any
+  public localTimeOffset: number = 0
+  public deferredCompletion: Defer
   public id: string
   public name: string
   public signParams: any
-  public loaded: any = 0
+  public loaded: number = 0
   public sizeBytes: any
-  public totalUploaded: any = 0
+  public totalUploaded: number = 0
   public startTime: any
   public status: EVAPORATE_STATUS = EVAPORATE_STATUS.PENDING
-  public progressInterval: any
+  // timeout?
+  public progressInterval: number
   public uploadId: string
   public firstMd5Digest: string
   public eTag: string
-  public abortedByUser: any
-  public file: any
+  public abortedByUser: boolean
+  public file: File
   public lastPartSatisfied: any = Promise.resolve('onStart')
 
   public contentType: string
@@ -74,25 +80,25 @@ class FileUpload implements UploadFileConfig {
     this.signParams = con.signParams
   }
 
-  public nameChanged: (awsObjectKey: string) => void
-  public uploadInitiated: (s3UploadId?: string) => void
-  public beforeSigner?: (xhr: XMLHttpRequest, url: string) => void
+  public nameChanged: (awsObjectKey: string) => void = () => {}
+  public uploadInitiated: (s3UploadId?: string) => void = () => {}
+  public beforeSigner?: (xhr: XMLHttpRequest, url: string) => void = () => {}
 
-  public started: (file_key: string) => void
-  public progress: (p: number, stats: FileUploadStats) => void
-  public paused: (file_key?: string) => void
-  public resumed: (file_key?: string) => void
-  public pausing: (file_key?: string) => void
-  public cancelled: () => void
+  public started: (file_key: string) => void = () => {}
+  public progress: (p: number, stats: FileUploadStats) => void = () => {}
+  public paused: (file_key?: string) => void = () => {}
+  public resumed: (file_key?: string) => void = () => {}
+  public pausing: (file_key?: string) => void = () => {}
+  public cancelled: () => void = () => {}
   public complete: (
     xhr: XMLHttpRequest,
     awsObjectKey: string,
     stats: FileUploadStats
-  ) => VoidFunction
+  ) => void = () => {}
 
-  public info: (...msg: string[]) => void
-  public warn: (...msg: string[]) => void
-  public error: (msg: string) => void
+  public info: (...msg: string[]) => void = () => {}
+  public warn: (...msg: string[]) => void = () => {}
+  public error: (msg: string) => void = () => {}
 
   updateLoaded(loadedNow: number): void {
     this.loaded += loadedNow

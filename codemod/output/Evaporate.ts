@@ -280,40 +280,26 @@ class Evaporate {
           uploadFileConfig.name = s3EncodedObjectName(uploadFileConfig.name)
         }
 
-        const fileUpload = new FileUpload(
-          extend(
-            {
-              started() {},
-              uploadInitiated() {},
-              progress() {},
-              complete() {},
-              cancelled() {},
-              paused() {},
-              resumed() {},
-              pausing() {},
-              nameChanged() {},
-              info() {},
-              warn() {},
-              error() {},
-              beforeSigner: undefined,
-              xAmzHeadersAtInitiate: {},
-              notSignedHeadersAtInitiate: {},
-              xAmzHeadersCommon: null,
-              xAmzHeadersAtUpload: {},
-              xAmzHeadersAtComplete: {}
-            },
-            uploadFileConfig,
-            {
-              status: EVAPORATE_STATUS.PENDING,
-              priority: 0,
-              loadedBytes: 0,
-              sizeBytes: uploadFileConfig.file.size,
-              eTag: ''
-            }
-          ),
-          evaporateConfig,
-          self
-        )
+        const fileConfig = extend(
+          {
+            beforeSigner: undefined,
+            xAmzHeadersAtInitiate: {},
+            notSignedHeadersAtInitiate: {},
+            xAmzHeadersCommon: null,
+            xAmzHeadersAtUpload: {},
+            xAmzHeadersAtComplete: {}
+          },
+          uploadFileConfig,
+          {
+            status: EVAPORATE_STATUS.PENDING,
+            priority: 0,
+            loadedBytes: 0,
+            sizeBytes: uploadFileConfig.file.size,
+            eTag: ''
+          }
+        ) as UploadFileConfig
+
+        const fileUpload = new FileUpload(fileConfig, evaporateConfig, self)
 
         const fileKey = fileUpload.id
         self.pendingFiles[fileKey] = fileUpload

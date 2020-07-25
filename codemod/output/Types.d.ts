@@ -12,7 +12,7 @@ export type Request = {
 }
 
 export type Defer = {
-  resolve: Function
-  reject: Function
+  resolve: (value: any) => void
+  reject: (value: any) => void
   promise: Promise<any>
 }
