@@ -15,5 +15,5 @@ interface UploadFileDataInterface {
 }
 
 export type UploadFileConfig = FileUploadCallbacksInterface &
-  Partial<UploadHeadersInterface> &
+  UploadHeadersInterface &
   UploadFileDataInterface

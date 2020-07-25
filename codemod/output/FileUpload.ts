@@ -50,7 +50,7 @@ class FileUpload
   public con: CreateConfig
   public evaporate: Evaporate
   public localTimeOffset: number = 0
-  public deferredCompletion: Defer
+  public deferredCompletion: Defer<void>
   public id: string
   public name: string
   public signParams: any
@@ -79,6 +79,12 @@ class FileUpload
     this.id = decodeURIComponent(`${this.con.bucket}/${this.name}`)
     this.signParams = con.signParams
   }
+
+  public xAmzHeadersAtInitiate: { [key: string]: string } = {}
+  public notSignedHeadersAtInitiate: { [key: string]: string } = {}
+  public xAmzHeadersAtUpload: { [key: string]: string } = {}
+  public xAmzHeadersAtComplete: { [key: string]: string } = {}
+  public xAmzHeadersCommon: { [key: string]: string } = null
 
   public nameChanged: (awsObjectKey: string) => void = () => {}
   public uploadInitiated: (s3UploadId?: string) => void = () => {}

@@ -280,24 +280,13 @@ class Evaporate {
           uploadFileConfig.name = s3EncodedObjectName(uploadFileConfig.name)
         }
 
-        const fileConfig = extend(
-          {
-            beforeSigner: undefined,
-            xAmzHeadersAtInitiate: {},
-            notSignedHeadersAtInitiate: {},
-            xAmzHeadersCommon: null,
-            xAmzHeadersAtUpload: {},
-            xAmzHeadersAtComplete: {}
-          },
-          uploadFileConfig,
-          {
+        const fileConfig = extend({}, uploadFileConfig, {
             status: EVAPORATE_STATUS.PENDING,
             priority: 0,
             loadedBytes: 0,
             sizeBytes: uploadFileConfig.file.size,
             eTag: ''
-          }
-        ) as UploadFileConfig
+        }) as UploadFileConfig
 
         const fileUpload = new FileUpload(fileConfig, evaporateConfig, self)
 
