@@ -19,7 +19,10 @@ class AwsSignature {
   error() {}
   authorizationString() {}
   stringToSign() {}
-  canonicalRequest() {}
+  canonicalRequest() {
+    return ''
+  }
+
   setHeaders(xhr: XMLHttpRequest) {}
 
   datetime(timeOffset: number): Date {

@@ -122,7 +122,7 @@ class SignedS3AWSRequest {
     return encodeURIComponent(this.signer.stringToSign())
   }
 
-  canonicalRequest(): string | void {
+  canonicalRequest(): string {
     return this.signer.canonicalRequest()
   }
 
