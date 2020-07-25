@@ -30,7 +30,7 @@ class Evaporate {
   public localTimeOffset: number = 0
   public pendingFiles: { [key: string]: FileUpload } = {}
   public queuedFiles: Array<FileUpload> = []
-  public filesInProcess: Array<any> = []
+  public filesInProcess: Array<FileUpload> = []
   public evaporatingCount: number = 0
 
   static getLocalTimeOffset(config: CreateConfig): Promise<number> {
@@ -281,11 +281,11 @@ class Evaporate {
         }
 
         const fileConfig = extend({}, uploadFileConfig, {
-            status: EVAPORATE_STATUS.PENDING,
-            priority: 0,
-            loadedBytes: 0,
-            sizeBytes: uploadFileConfig.file.size,
-            eTag: ''
+          status: EVAPORATE_STATUS.PENDING,
+          priority: 0,
+          loadedBytes: 0,
+          sizeBytes: uploadFileConfig.file.size,
+          eTag: ''
         }) as UploadFileConfig
 
         const fileUpload = new FileUpload(fileConfig, evaporateConfig, self)
@@ -309,7 +309,7 @@ class Evaporate {
     )
   }
 
-  cancel(id) {
+  cancel(id: string) {
     return typeof id === 'undefined' ? this._cancelAll() : this._cancelOne(id)
   }
 
