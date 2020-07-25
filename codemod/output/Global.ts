@@ -1,9 +1,14 @@
 import { noOpLogger } from './Utils'
+import { HistoryCache } from './HistoryCache'
 
 type Global = {
   HOURS_AGO: Date
-  historyCache: any
-  l: any
+  historyCache: HistoryCache
+  l: {
+    d: Function
+    w: Function
+    e: Function
+  }
 }
 
 const Global = {} as Global
