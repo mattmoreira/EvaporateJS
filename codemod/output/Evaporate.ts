@@ -350,7 +350,7 @@ class Evaporate {
     return Promise.all(promise)
   }
 
-  pause(id: string, options = {} as any): Promise<any> {
+  pause(id: string, options: { force?: boolean } = {}): Promise<any> {
     const force: boolean =
       typeof options.force === 'undefined' ? false : options.force
 
