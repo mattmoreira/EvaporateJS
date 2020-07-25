@@ -8,20 +8,22 @@ import { SignedS3AWSRequest } from './SignedS3AWSRequest'
 import { FileUpload } from './FileUpload'
 import { Defer } from './Types'
 import { FileUploadInterface } from './FileUploadInterface'
+import { CreateConfig } from './EvaporateCreateConfigInterface'
 
-function signingVersion(
-  awsRequest: SignedS3AWSRequest
-): AwsSignatureV2 | AwsSignatureV4 {
+type AwsSignature = AwsSignatureV2 | AwsSignatureV4
+
+function signingVersion(awsRequest: SignedS3AWSRequest): AwsSignature {
   const { awsSignatureVersion } = awsRequest.con
 
   const AwsSignature =
     awsSignatureVersion === '4' ? AwsSignatureV4 : AwsSignatureV2
+
   return new AwsSignature(awsRequest)
 }
 
-function authorizationMethod(
-  awsRequest: SignedS3AWSRequest
-): AuthorizationMethod | AuthorizationCustom {
+type Authorization = AuthorizationMethod | AuthorizationCustom
+
+function authorizationMethod(awsRequest: SignedS3AWSRequest): Authorization {
   const con = awsRequest.fileUpload.con
 
   if (typeof con.customAuthMethod === 'function') {
@@ -31,7 +33,7 @@ function authorizationMethod(
   return new AuthorizationMethod(awsRequest)
 }
 
-function awsUrl(con: this): string {
+function awsUrl(con: CreateConfig): string {
   let url
 
   if (con.aws_url) {
@@ -125,16 +127,18 @@ function elementText(source: string, element: string): string {
   return match ? match[1] : ''
 }
 
-function defer(): Defer {
+function defer<T>(): Defer<T> {
   let deferred = {} as any
   let promise
 
-  promise = new Promise((resolve: () => any, reject: () => any) => {
-    deferred = {
-      resolve,
-      reject
+  promise = new Promise(
+    (resolve: (value: T) => void, reject: (value: T) => void) => {
+      deferred = {
+        resolve,
+        reject
+      }
     }
-  })
+  )
 
   return {
     resolve: deferred.resolve,
@@ -164,10 +168,12 @@ function extend(obj1: object, obj2: object, obj3?: object): object {
   return obj1
 }
 
-function getSavedUploads(
-  purge?: boolean
-): { [key: string]: FileUploadInterface } {
-  const uploads = JSON.parse(Global.historyCache.getItem('awsUploads') || '{}')
+type SavedUploads = { [key: string]: FileUploadInterface }
+
+function getSavedUploads(purge?: boolean): SavedUploads {
+  const uploads: SavedUploads = JSON.parse(
+    Global.historyCache.getItem('awsUploads') || '{}'
+  )
 
   if (purge) {
     for (const key in uploads) {
@@ -211,7 +217,7 @@ function removeUpload(uploadKey: string): void {
   Global.historyCache.setItem('awsUploads', JSON.stringify(uploads))
 }
 
-function removeAtIndex(a: Array<any>, i: any) {
+function removeAtIndex<T>(a: Array<T>, i: T): boolean {
   const idx = a.indexOf(i)
 
   if (idx > -1) {
