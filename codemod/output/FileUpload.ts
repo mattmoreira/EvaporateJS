@@ -301,14 +301,14 @@ class FileUpload
     this.s3Parts = []
   }
 
-  _startCompleteUpload(callComplete: boolean) {
+  _startCompleteUpload(callComplete: boolean): () => void {
     return function() {
       const promise = callComplete ? this.completeUpload() : Promise.resolve()
       promise.then(this.deferredCompletion.resolve.bind(this))
     }
   }
 
-  _abortUpload() {
+  _abortUpload(): void {
     if (!this.abortedByUser) {
       const self = this
 
@@ -320,7 +320,7 @@ class FileUpload
     }
   }
 
-  abortParts(pause: boolean) {
+  abortParts(pause: boolean): void {
     const self = this
     const toAbort = this.partsInProcess.slice(0)
 
@@ -343,12 +343,12 @@ class FileUpload
     })
   }
 
-  makeParts(firstPart?: number) {
+  makeParts(firstPart?: number): Promise<XMLHttpRequest>[] {
     this.numParts = Math.ceil(this.sizeBytes / this.con.partSize) || 1 // issue #58
-    const partsDeferredPromises = []
+    const partsDeferredPromises: Promise<XMLHttpRequest>[] = []
     const self = this
 
-    function cleanUpAfterPart(s3Part: S3Part) {
+    function cleanUpAfterPart(s3Part: S3Part): void {
       removeAtIndex(self.partsToUpload, s3Part.partNumber)
       removeAtIndex(self.partsInProcess, s3Part.partNumber)
 
@@ -357,7 +357,7 @@ class FileUpload
       }
     }
 
-    function resolve(s3Part: S3Part) {
+    function resolve(s3Part: S3Part): () => void {
       return () => {
         cleanUpAfterPart(s3Part)
 
@@ -371,7 +371,7 @@ class FileUpload
       }
     }
 
-    function reject(s3Part: S3Part) {
+    function reject(s3Part: S3Part): () => void {
       return () => {
         cleanUpAfterPart(s3Part)
       }
@@ -420,7 +420,7 @@ class FileUpload
     return s3Part
   }
 
-  setStatus(s: EVAPORATE_STATUS) {
+  setStatus(s: EVAPORATE_STATUS): void {
     this.status = s
   }
 
@@ -446,7 +446,7 @@ class FileUpload
     saveUpload(fileKey, newUpload)
   }
 
-  updateUploadFile(updates): void {
+  updateUploadFile(updates: FileUploadInterface): void {
     const fileKey = uploadKey(this)
     const uploads = getSavedUploads()
     const upload = extend({}, uploads[fileKey], updates) as FileUploadInterface
