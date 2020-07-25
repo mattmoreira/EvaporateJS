@@ -11,6 +11,7 @@ interface S3PartStats {
   loadedBytesPrevious?: number
   partNumber: number
   status: EVAPORATE_STATUS
+  finishedUploadingAt?: string
 }
 
 export type InitialS3Part = S3PartDetail & S3PartStats
@@ -28,6 +29,8 @@ interface S3FileMetadata {
 export type S3File = FileData & S3FileMetadata & Pick<S3PartStats, 'partNumber'>
 
 export type StartedS3Part = InitialS3Part & FileData
-export type CompletedS3Part = StartedS3Part & S3FileMetadata
+export type CompletedS3Part = StartedS3Part &
+  S3FileMetadata &
+  Pick<S3PartStats, 'finishedUploadingAt'>
 
 export type S3Part = InitialS3Part | StartedS3Part | CompletedS3Part

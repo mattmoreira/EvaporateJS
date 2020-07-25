@@ -584,7 +584,8 @@ class FileUpload
         cp.partNumber,
         EVAPORATE_STATUS.COMPLETE,
         cp.size
-      ) as any
+      ) as CompletedS3Part
+
       uploadedPart.eTag = cp.eTag
       uploadedPart.loadedBytes = cp.size
       uploadedPart.loadedBytesPrevious = cp.size
