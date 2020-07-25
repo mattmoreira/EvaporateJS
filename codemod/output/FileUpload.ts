@@ -728,7 +728,7 @@ class FileUpload
   }
 
   abortUpload(): Promise<void> {
-    return new Promise((resolve: () => any, reject: () => any) => {
+    return new Promise((resolve: () => void, reject: () => void) => {
       if (typeof this.uploadId === 'undefined') {
         resolve()
         return

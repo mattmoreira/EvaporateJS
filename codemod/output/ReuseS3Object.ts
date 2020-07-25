@@ -4,7 +4,7 @@ import { Request } from './Types'
 
 //http://docs.amazonwebservices.com/AmazonS3/latest/API/mpUploadComplete.html
 class ReuseS3Object extends SignedS3AWSRequestWithRetryLimit {
-  public awsKey: any
+  public awsKey: string
 
   constructor(fileUpload: FileUpload, awsKey) {
     const request: Request = {
