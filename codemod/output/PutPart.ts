@@ -26,7 +26,7 @@ class PutPart extends PartialSignedS3AWSRequest {
   public partNumber: number
   public start: number = 0
   public end: number = 0
-  public stalledInterval: number = -1
+  public stalledInterval: NodeJS.Timeout = null
   public result: any
   static size: number
 
