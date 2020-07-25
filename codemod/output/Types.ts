@@ -16,7 +16,7 @@ export type Request = {
 }
 
 export type Defer<T> = {
-  resolve: (value: any) => void
+  resolve: (value: T) => void
   reject: (value: any) => void
   promise: Promise<T>
 }

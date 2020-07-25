@@ -128,17 +128,23 @@ function elementText(source: string, element: string): string {
 }
 
 function defer<T>(): Defer<T> {
-  let deferred = {} as any
+  type ResolveCallback = (value: T) => void
+  type RejectCallback = (value: any) => void
+
+  type Deferred = {
+    resolve?: ResolveCallback
+    reject?: RejectCallback
+  }
+
+  let deferred: Deferred = {}
   let promise
 
-  promise = new Promise(
-    (resolve: (value: T) => void, reject: (value: T) => void) => {
-      deferred = {
-        resolve,
-        reject
-      }
+  promise = new Promise((resolve: ResolveCallback, reject: RejectCallback) => {
+    deferred = {
+      resolve,
+      reject
     }
-  )
+  })
 
   return {
     resolve: deferred.resolve,

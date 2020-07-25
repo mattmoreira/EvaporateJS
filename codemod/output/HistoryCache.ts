@@ -1,5 +1,7 @@
+import { Dictionary } from './Types'
+
 class HistoryCache {
-  public cacheStore: any
+  public cacheStore: Dictionary<string>
   supported: boolean = false
 
   static supported(): boolean {

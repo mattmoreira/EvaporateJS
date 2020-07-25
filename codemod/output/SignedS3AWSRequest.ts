@@ -28,7 +28,7 @@ class SignedS3AWSRequest {
   public request: Request
   public signer: AwsSignatureV2 | AwsSignatureV4
   public currentXhr: XMLHttpRequest
-  public payloadPromise: any
+  public payloadPromise: Promise<Uint8Array | ArrayBuffer | string | []>
 
   constructor(fileUpload: FileUpload, request?: Request) {
     this.fileUpload = fileUpload
@@ -225,7 +225,7 @@ class SignedS3AWSRequest {
   }
 
   //see: http://docs.amazonwebservices.com/AmazonS3/latest/dev/RESTAuthentication.html#ConstructingTheAuthenticationHeader
-  authorize(): Promise<any> {
+  authorize(): Promise<string> {
     this.request.dateString = this.signer.dateString(this.localTimeOffset)
 
     this.request.x_amz_headers = extend(this.request.x_amz_headers, {
