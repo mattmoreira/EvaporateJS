@@ -1,3 +1,5 @@
+import { Dictionary } from './Types'
+
 export interface FileUploadStats {
   speed: number
   readableSpeed: string
@@ -19,7 +21,7 @@ export interface FileUploadInterface {
   firstMd5Digest?: string
   lastModifiedDate: string
   partSize: number
-  signParams: { [key: string]: any }
+  signParams: Dictionary<any>
   uploadId: string
 }
 

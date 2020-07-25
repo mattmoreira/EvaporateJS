@@ -1,12 +1,14 @@
 import { HistoryCache } from './HistoryCache'
 import { FileUpload } from './FileUpload'
 import { Global } from './Global'
+
 import {
   EVAPORATE_STATUS,
   IMMUTABLE_OPTIONS,
   ACTIVE_STATUSES,
   PAUSED_STATUSES
 } from './Constants'
+
 import {
   extend,
   noOpLogger,
@@ -20,15 +22,17 @@ import {
   CreateConfig,
   EvaporateOverrideConfigOptions
 } from './EvaporateCreateConfigInterface'
+
 import { UploadFileConfig } from './EvaporateUploadFileInterface'
 import { EvaporateValidationEnum } from './EvaporateValidationEnum'
+import { Dictionary } from './Types'
 
 class Evaporate {
   public config: CreateConfig = null
   public _instantiationError: EvaporateValidationEnum
   public supported: boolean = false
   public localTimeOffset: number = 0
-  public pendingFiles: { [key: string]: FileUpload } = {}
+  public pendingFiles: Dictionary<FileUpload> = {}
   public queuedFiles: Array<FileUpload> = []
   public filesInProcess: Array<FileUpload> = []
   public evaporatingCount: number = 0

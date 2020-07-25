@@ -1,6 +1,6 @@
 import { SignedS3AWSRequest } from './SignedS3AWSRequest'
 import { FileUpload } from './FileUpload'
-import { Request, AnyDictionary } from './Types'
+import { Request, Dictionary } from './Types'
 import { CreateConfig } from './EvaporateCreateConfigInterface'
 
 class AuthorizationMethod {
@@ -9,7 +9,7 @@ class AuthorizationMethod {
   request: Request
   con: CreateConfig
 
-  static makeSignParamsObject(params: AnyDictionary): AnyDictionary {
+  static makeSignParamsObject(params: Dictionary<any>): Dictionary<any> {
     const out = {}
 
     for (const param in params) {

@@ -1,11 +1,12 @@
 import { FileUploadCallbacksInterface } from './FileUploadInterface'
+import { Dictionary } from './Types'
 
 interface UploadHeadersInterface {
-  xAmzHeadersAtInitiate: { [key: string]: string }
-  notSignedHeadersAtInitiate: { [key: string]: string }
-  xAmzHeadersAtUpload: { [key: string]: string }
-  xAmzHeadersAtComplete: { [key: string]: string }
-  xAmzHeadersCommon: { [key: string]: string }
+  xAmzHeadersAtInitiate: Dictionary<string>
+  notSignedHeadersAtInitiate: Dictionary<string>
+  xAmzHeadersAtUpload: Dictionary<string>
+  xAmzHeadersAtComplete: Dictionary<string>
+  xAmzHeadersCommon: Dictionary<string>
   contentType: string
 }
 

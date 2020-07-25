@@ -34,7 +34,7 @@ import {
   StartedS3Part
 } from './FileS3PartInterface'
 import { UploadFileConfig } from './EvaporateUploadFileInterface'
-import { Defer, AnyDictionary } from './Types'
+import { Defer, Dictionary } from './Types'
 
 class FileUpload
   implements
@@ -53,14 +53,14 @@ class FileUpload
   public deferredCompletion: Defer<void>
   public id: string
   public name: string
-  public signParams: AnyDictionary
+  public signParams: Dictionary<any>
   public loaded: number = 0
   public sizeBytes: any
   public totalUploaded: number = 0
   public startTime: any
   public status: EVAPORATE_STATUS = EVAPORATE_STATUS.PENDING
   // timeout?
-  public progressInterval: number
+  public progressInterval: NodeJS.Timeout
   public uploadId: string
   public firstMd5Digest: string
   public eTag: string
@@ -80,11 +80,11 @@ class FileUpload
     this.signParams = con.signParams
   }
 
-  public xAmzHeadersAtInitiate: { [key: string]: string } = {}
-  public notSignedHeadersAtInitiate: { [key: string]: string } = {}
-  public xAmzHeadersAtUpload: { [key: string]: string } = {}
-  public xAmzHeadersAtComplete: { [key: string]: string } = {}
-  public xAmzHeadersCommon: { [key: string]: string } = null
+  public xAmzHeadersAtInitiate: Dictionary<string> = {}
+  public notSignedHeadersAtInitiate: Dictionary<string> = {}
+  public xAmzHeadersAtUpload: Dictionary<string> = {}
+  public xAmzHeadersAtComplete: Dictionary<string> = {}
+  public xAmzHeadersCommon: Dictionary<string> = null
 
   public nameChanged: (awsObjectKey: string) => void = () => {}
   public uploadInitiated: (s3UploadId?: string) => void = () => {}

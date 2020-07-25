@@ -6,7 +6,7 @@ import { AwsSignatureV4 } from './AwsSignatureV4'
 import { AwsSignatureV2 } from './AwsSignatureV2'
 import { SignedS3AWSRequest } from './SignedS3AWSRequest'
 import { FileUpload } from './FileUpload'
-import { Defer } from './Types'
+import { Defer, Dictionary } from './Types'
 import { FileUploadInterface } from './FileUploadInterface'
 import { CreateConfig } from './EvaporateCreateConfigInterface'
 
@@ -168,10 +168,8 @@ function extend(obj1: object, obj2: object, obj3?: object): object {
   return obj1
 }
 
-type SavedUploads = { [key: string]: FileUploadInterface }
-
-function getSavedUploads(purge?: boolean): SavedUploads {
-  const uploads: SavedUploads = JSON.parse(
+function getSavedUploads(purge?: boolean): Dictionary<FileUploadInterface> {
+  const uploads: Dictionary<FileUploadInterface> = JSON.parse(
     Global.historyCache.getItem('awsUploads') || '{}'
   )
 
