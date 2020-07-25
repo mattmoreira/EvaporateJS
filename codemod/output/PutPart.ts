@@ -3,19 +3,20 @@ import { Global } from './Global'
 import { PARTS_MONITOR_INTERVAL_MS, EVAPORATE_STATUS } from './Constants'
 import { getSupportedBlobSlice } from './Utils'
 import { Request } from './Types'
+import { FileUpload } from './FileUpload'
+import { S3Part, StartedS3Part, CompletedS3Part } from './FileS3PartInterface'
 
 //http://docs.aws.amazon.com/AmazonS3/latest/API/mpUploadUploadPart.html
 class PutPart extends SignedS3AWSRequest {
-  public part: any = 1
-  public partNumber: any
-  public start: any = 0
-  public end: any = 0
-  public stalledInterval: any = -1
-  public size: any = 0
+  public part: S3Part
+  public partNumber: number
+  public start: number = 0
+  public end: number = 0
+  public stalledInterval: number = -1
   public result: any
   static size: number
 
-  constructor(fileUpload, part) {
+  constructor(fileUpload: FileUpload, part: S3Part) {
     super(fileUpload)
 
     this.part = part
@@ -39,13 +40,13 @@ class PutPart extends SignedS3AWSRequest {
     this.updateRequest(request)
   }
 
-  getPartMd5Digest() {
+  getPartMd5Digest(): Promise<void> {
     const self = this
-    const part = this.part
+    const part = this.part as StartedS3Part | CompletedS3Part
 
     return new Promise((resolve, reject) => {
       if (self.con.computeContentMd5 && !part.md5_digest) {
-        self.getPayload().then((data: FileReader) => {
+        self.getPayload().then((data: ArrayBuffer) => {
           const md5_digest = self.con.cryptoMd5Method(data)
 
           if (
@@ -69,12 +70,14 @@ class PutPart extends SignedS3AWSRequest {
       if (md5_digest) {
         Global.l.d(self.request.step, 'MD5 digest:', md5_digest)
         self.request.md5_digest = md5_digest
-        self.part.md5_digest = md5_digest
+
+        part.md5_digest = md5_digest
+        self.part = part
       }
     })
   }
 
-  sendRequestToAWS() {
+  sendRequestToAWS(): Promise<string> {
     this.stalledInterval = setInterval(
       this.stalledPartMonitor(),
       PARTS_MONITOR_INTERVAL_MS
@@ -83,7 +86,7 @@ class PutPart extends SignedS3AWSRequest {
     return SignedS3AWSRequest.prototype.sendRequestToAWS.call(this)
   }
 
-  send() {
+  send(): Promise<void> {
     if (
       this.part.status !== EVAPORATE_STATUS.COMPLETE &&
       ![
@@ -110,7 +113,7 @@ class PutPart extends SignedS3AWSRequest {
     }
   }
 
-  success() {
+  success(): void {
     clearInterval(this.stalledInterval)
     const eTag = this.currentXhr.getResponseHeader('ETag')
     this.currentXhr = null
@@ -120,7 +123,7 @@ class PutPart extends SignedS3AWSRequest {
     }
   }
 
-  onProgress(evt: ProgressEvent) {
+  onProgress(evt: ProgressEvent): void {
     if (evt.loaded > 0) {
       const loadedNow = evt.loaded - this.part.loadedBytes
 
@@ -131,7 +134,7 @@ class PutPart extends SignedS3AWSRequest {
     }
   }
 
-  stalledPartMonitor() {
+  stalledPartMonitor(): () => void {
     const lastLoaded = this.part.loadedBytes
     const self = this
 
@@ -170,13 +173,13 @@ class PutPart extends SignedS3AWSRequest {
     }
   }
 
-  resetLoadedBytes() {
+  resetLoadedBytes(): void {
     this.fileUpload.updateLoaded(-this.part.loadedBytes)
     this.part.loadedBytes = 0
     this.fileUpload.onProgress()
   }
 
-  errorExceptionStatus() {
+  errorExceptionStatus(): boolean {
     return [
       EVAPORATE_STATUS.CANCELED,
       EVAPORATE_STATUS.ABORTED,
@@ -185,13 +188,13 @@ class PutPart extends SignedS3AWSRequest {
     ].includes(this.fileUpload.status)
   }
 
-  delaySend() {
+  delaySend(): void {
     const backOffWait = this.backOffWait()
     this.attempts += 1
     setTimeout(this.send.bind(this), backOffWait)
   }
 
-  errorHandler(reason: string) {
+  errorHandler(reason: string): boolean {
     clearInterval(this.stalledInterval)
 
     if (reason.match(/status:404/)) {
@@ -213,7 +216,7 @@ class PutPart extends SignedS3AWSRequest {
     return true
   }
 
-  abort() {
+  abort(): void {
     if (this.currentXhr) {
       this.currentXhr.abort()
     }
@@ -222,7 +225,7 @@ class PutPart extends SignedS3AWSRequest {
     this.attempts = 1
   }
 
-  streamToArrayBuffer(stream) {
+  streamToArrayBuffer(stream): Promise<Uint8Array | []> {
     return new Promise((resolve, reject) => {
       // stream is empty or ended
       if (!stream.readable) {
@@ -272,7 +275,7 @@ class PutPart extends SignedS3AWSRequest {
     })
   }
 
-  getPayload() {
+  getPayload(): Promise<Uint8Array | ArrayBuffer | string | []> {
     if (typeof this.payloadPromise === 'undefined') {
       this.payloadPromise = this.con.readableStreams
         ? this.payloadFromStream()
@@ -282,7 +285,7 @@ class PutPart extends SignedS3AWSRequest {
     return this.payloadPromise
   }
 
-  payloadFromStream() {
+  payloadFromStream(): Promise<Uint8Array | []> {
     const stream = this.con.readableStreamPartMethod(
       this.fileUpload.file,
       this.start,
@@ -298,7 +301,7 @@ class PutPart extends SignedS3AWSRequest {
     })
   }
 
-  payloadFromBlob() {
+  payloadFromBlob(): Promise<string | ArrayBuffer> {
     // browsers' implementation of the Blob.slice function has been renamed a couple of times, and the meaning of the
     // 2nd parameter changed. For example Gecko went from slice(start,length) -> mozSlice(start, end) -> slice(start, end).
     // As of 12/12/12, it seems that the unified 'slice' is the best bet, hence it being first in the list. See
@@ -323,7 +326,7 @@ class PutPart extends SignedS3AWSRequest {
     return Promise.resolve(blob)
   }
 
-  getStartedPromise() {
+  getStartedPromise(): Promise<void> {
     return this.started.promise
   }
 }

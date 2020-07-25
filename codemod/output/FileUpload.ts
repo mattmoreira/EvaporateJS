@@ -502,7 +502,7 @@ class FileUpload
   }
 
   partSuccess(eTag: string, putRequest: PutPart): boolean {
-    const part: CompletedS3Part = putRequest.part
+    const part: CompletedS3Part = putRequest.part as CompletedS3Part
     Global.l.d(putRequest.request.step, 'ETag:', eTag)
 
     if (part.isEmpty || eTag !== ETAG_OF_0_LENGTH_BLOB) {
