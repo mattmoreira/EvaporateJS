@@ -62,7 +62,7 @@ class AwsSignatureV4 extends AwsSignature {
     type EncodedQueryString = { name: string; value: string }
     const encoded: EncodedQueryString[] = []
     let nameValue: string | string[]
-    let i
+    let i: number
 
     for (i = 0; i < searchParts.length; i++) {
       nameValue = searchParts[i].split('=')
