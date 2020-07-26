@@ -13,7 +13,7 @@ import { FileUpload } from './FileUpload'
 
 import { AwsSignatureV2 } from './AwsSignatureV2'
 import { AwsSignatureV4 } from './AwsSignatureV4'
-import { Defer, Request } from './Types'
+import { Defer, Request, Dictionary } from './Types'
 import { EvaporateConfigInterface } from './EvaporateConfigInterface'
 
 class SignedS3AWSRequest {
@@ -151,7 +151,7 @@ class SignedS3AWSRequest {
       const xhr = new XMLHttpRequest()
       self.currentXhr = xhr
       let url = [self.awsUrl, self.getPath(), self.request.path].join('')
-      const all_headers = {}
+      const all_headers: Dictionary<string> = {}
 
       if (self.request.query_string) {
         url += self.request.query_string
@@ -230,7 +230,7 @@ class SignedS3AWSRequest {
 
     this.request.x_amz_headers = extend(this.request.x_amz_headers, {
       'x-amz-date': this.request.dateString
-    })
+    }) as Dictionary<string>
 
     return this.signer
       .getPayload()

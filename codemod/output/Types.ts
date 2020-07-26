@@ -2,11 +2,11 @@ export type Request = {
   method: string
   path: string
   query_string?: string
-  x_amz_headers: object
+  x_amz_headers: Dictionary<string>
   step: string
   success404?: boolean
   contentType?: string
-  not_signed_headers?: Dictionary<any>
+  not_signed_headers?: Dictionary<string>
   contentSha256?: string
   onProgress?: (this: XMLHttpRequest, ev: ProgressEvent<EventTarget>) => any
   dateString?: string
