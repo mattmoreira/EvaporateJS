@@ -10,7 +10,7 @@ class AuthorizationMethod {
   con: EvaporateConfigInterface
 
   static makeSignParamsObject(params: Dictionary<any>): Dictionary<any> {
-    const out = {}
+    const out: Dictionary<any> = {}
 
     for (const param in params) {
       if (!params.hasOwnProperty(param)) {
