@@ -2,12 +2,12 @@ import { HistoryCache } from './HistoryCache'
 import { FileUpload } from './FileUpload'
 import { Global } from './Global'
 
+import { IMMUTABLE_OPTIONS } from './Constants'
 import {
   EVAPORATE_STATUS,
-  IMMUTABLE_OPTIONS,
   ACTIVE_STATUSES,
   PAUSED_STATUSES
-} from './Constants'
+} from './EvaporateStatusEnum'
 
 import {
   extend,

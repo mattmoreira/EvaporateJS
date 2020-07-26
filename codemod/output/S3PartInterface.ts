@@ -1,5 +1,5 @@
 import { PutPart } from './PutPart'
-import { EVAPORATE_STATUS } from './Constants'
+import { EVAPORATE_STATUS } from './EvaporateStatusEnum'
 
 interface S3PartDetail {
   awsRequest?: PutPart

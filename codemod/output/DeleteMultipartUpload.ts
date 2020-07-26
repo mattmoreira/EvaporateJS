@@ -1,6 +1,6 @@
 import { SignedS3AWSRequest } from './SignedS3AWSRequest'
 import { Global } from './Global'
-import { EVAPORATE_STATUS } from './Constants'
+import { EVAPORATE_STATUS } from './EvaporateStatusEnum'
 import { Request } from './Types'
 
 const maxRetries = 1

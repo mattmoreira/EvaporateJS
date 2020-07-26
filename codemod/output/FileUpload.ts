@@ -5,12 +5,8 @@ import { DeleteMultipartUpload } from './DeleteMultipartUpload'
 import { ResumeInterruptedUpload } from './ResumeInterruptedUpload'
 import { ReuseS3Object } from './ReuseS3Object'
 import { Global } from './Global'
-import {
-  EVAPORATE_STATUS,
-  ACTIVE_STATUSES,
-  FAR_FUTURE,
-  ETAG_OF_0_LENGTH_BLOB
-} from './Constants'
+import { FAR_FUTURE, ETAG_OF_0_LENGTH_BLOB } from './Constants'
+import { EVAPORATE_STATUS, ACTIVE_STATUSES } from './EvaporateStatusEnum'
 import {
   extend,
   defer,

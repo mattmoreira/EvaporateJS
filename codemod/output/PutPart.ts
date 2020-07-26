@@ -1,6 +1,7 @@
 import { SignedS3AWSRequest } from './SignedS3AWSRequest'
 import { Global } from './Global'
-import { PARTS_MONITOR_INTERVAL_MS, EVAPORATE_STATUS } from './Constants'
+import { PARTS_MONITOR_INTERVAL_MS } from './Constants'
+import { EVAPORATE_STATUS } from './EvaporateStatusEnum'
 import { getSupportedBlobSlice } from './Utils'
 import { Request } from './Types'
 import { FileUpload } from './FileUpload'

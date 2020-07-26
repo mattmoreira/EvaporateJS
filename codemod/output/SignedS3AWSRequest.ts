@@ -1,5 +1,5 @@
 import { Global } from './Global'
-import { EVAPORATE_STATUS } from './Constants'
+import { EVAPORATE_STATUS } from './EvaporateStatusEnum'
 import {
   defer,
   awsUrl,
