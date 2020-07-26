@@ -1,13 +1,6 @@
 import { noOpLogger } from './Utils'
 import { HistoryCache } from './HistoryCache'
-
-interface DefaultLogger {
-  d: Function
-  w: Function
-  e: Function
-}
-
-type Logger = DefaultLogger & Partial<Console>
+import { Logger } from './Logger'
 
 type Global = {
   HOURS_AGO: Date
@@ -19,4 +12,5 @@ const Global = {} as Global
 Global.l = noOpLogger()
 Global.HOURS_AGO = null
 Global.historyCache = null
+
 export { Global }
