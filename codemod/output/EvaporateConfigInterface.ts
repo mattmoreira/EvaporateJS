@@ -2,7 +2,7 @@ import Evaporate from './Evaporate'
 import { IMMUTABLE_OPTIONS } from './Constants'
 import { Dictionary } from './Types'
 
-export interface CreateConfig {
+export interface EvaporateConfigInterface {
   readableStreams?: boolean
   readableStreamPartMethod?:
     | null
@@ -59,9 +59,9 @@ export interface CreateConfig {
 }
 
 type OverridableConfigKeys = Exclude<
-  keyof CreateConfig,
+  keyof EvaporateConfigInterface,
   typeof IMMUTABLE_OPTIONS
 >
 
 export interface EvaporateOverrideConfigOptions
-  extends Pick<CreateConfig, OverridableConfigKeys> {}
+  extends Pick<EvaporateConfigInterface, OverridableConfigKeys> {}

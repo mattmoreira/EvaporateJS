@@ -8,7 +8,7 @@ import { SignedS3AWSRequest } from './SignedS3AWSRequest'
 import { FileUpload } from './FileUpload'
 import { Defer, Dictionary } from './Types'
 import { S3UploadInterface } from './S3UploadInterface'
-import { CreateConfig } from './EvaporateCreateConfigInterface'
+import { EvaporateConfigInterface } from './EvaporateConfigInterface'
 
 type AwsSignature = AwsSignatureV2 | AwsSignatureV4
 
@@ -33,7 +33,7 @@ function authorizationMethod(awsRequest: SignedS3AWSRequest): Authorization {
   return new AuthorizationMethod(awsRequest)
 }
 
-function awsUrl(con: CreateConfig): string {
+function awsUrl(con: EvaporateConfigInterface): string {
   let url
 
   if (con.aws_url) {

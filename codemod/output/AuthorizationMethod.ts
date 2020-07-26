@@ -1,13 +1,13 @@
 import { SignedS3AWSRequest } from './SignedS3AWSRequest'
 import { FileUpload } from './FileUpload'
 import { Request, Dictionary } from './Types'
-import { CreateConfig } from './EvaporateCreateConfigInterface'
+import { EvaporateConfigInterface } from './EvaporateConfigInterface'
 
 class AuthorizationMethod {
   fileUpload: FileUpload
   awsRequest: SignedS3AWSRequest
   request: Request
-  con: CreateConfig
+  con: EvaporateConfigInterface
 
   static makeSignParamsObject(params: Dictionary<any>): Dictionary<any> {
     const out = {}

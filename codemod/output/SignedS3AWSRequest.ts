@@ -14,11 +14,11 @@ import { FileUpload } from './FileUpload'
 import { AwsSignatureV2 } from './AwsSignatureV2'
 import { AwsSignatureV4 } from './AwsSignatureV4'
 import { Defer, Request } from './Types'
-import { CreateConfig } from './EvaporateCreateConfigInterface'
+import { EvaporateConfigInterface } from './EvaporateConfigInterface'
 
 class SignedS3AWSRequest {
   public fileUpload: FileUpload
-  public con: CreateConfig
+  public con: EvaporateConfigInterface
   public attempts: number = 1
   public localTimeOffset: number = 0
   public awsDeferred: Defer<XMLHttpRequest>

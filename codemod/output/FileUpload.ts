@@ -21,7 +21,7 @@ import {
 } from './Utils'
 import Evaporate from './Evaporate'
 import { S3UploadInterface, S3UploadStatsInterface } from './S3UploadInterface'
-import { CreateConfig } from './EvaporateCreateConfigInterface'
+import { EvaporateConfigInterface } from './EvaporateConfigInterface'
 import {
   S3Part,
   CompletedS3Part,
@@ -36,14 +36,14 @@ class FileUpload
   implements
     UploadFileConfig,
     Pick<Evaporate, 'localTimeOffset'>,
-    Pick<CreateConfig, 'signParams'> {
+    Pick<EvaporateConfigInterface, 'signParams'> {
   public fileTotalBytesUploaded: number = 0
   public s3Parts: S3Part[]
   public partsOnS3: S3File[] = []
   public partsInProcess: number[] = []
   public partsToUpload: number[] = []
   public numParts: number = -1
-  public con: CreateConfig
+  public con: EvaporateConfigInterface
   public evaporate: Evaporate
   public localTimeOffset: number = 0
   public deferredCompletion: Defer<void>
@@ -67,8 +67,12 @@ class FileUpload
   public contentType: string
   public awsKey: string
 
-  constructor(file: UploadFileConfig, con: CreateConfig, evaporate: Evaporate) {
-    this.con = extend({}, con) as CreateConfig
+  constructor(
+    file: UploadFileConfig,
+    con: EvaporateConfigInterface,
+    evaporate: Evaporate
+  ) {
+    this.con = extend({}, con) as EvaporateConfigInterface
     this.evaporate = evaporate
     this.localTimeOffset = evaporate.localTimeOffset
     this.deferredCompletion = defer()

@@ -19,16 +19,16 @@ import {
 } from './Utils'
 
 import {
-  CreateConfig,
+  EvaporateConfigInterface,
   EvaporateOverrideConfigOptions
-} from './EvaporateCreateConfigInterface'
+} from './EvaporateConfigInterface'
 
 import { UploadFileConfig } from './EvaporateUploadFileInterface'
 import { EvaporateValidationEnum } from './EvaporateValidationEnum'
 import { Dictionary } from './Types'
 
 class Evaporate {
-  public config: CreateConfig = null
+  public config: EvaporateConfigInterface = null
   public _instantiationError: EvaporateValidationEnum
   public supported: boolean = false
   public localTimeOffset: number = 0
@@ -37,7 +37,7 @@ class Evaporate {
   public filesInProcess: Array<FileUpload> = []
   public evaporatingCount: number = 0
 
-  static getLocalTimeOffset(config: CreateConfig): Promise<number> {
+  static getLocalTimeOffset(config: EvaporateConfigInterface): Promise<number> {
     return new Promise(
       (resolve: (value: number) => void, reject: (value: string) => void) => {
         if (typeof config.localTimeOffset === 'number') {
@@ -75,8 +75,8 @@ class Evaporate {
     )
   }
 
-  static create(config: CreateConfig): Promise<Evaporate> {
-    const evapConfig = extend({}, config) as CreateConfig
+  static create(config: EvaporateConfigInterface): Promise<Evaporate> {
+    const evapConfig = extend({}, config) as EvaporateConfigInterface
 
     return Evaporate.getLocalTimeOffset(evapConfig).then((offset: number) => {
       evapConfig.localTimeOffset = offset
@@ -98,7 +98,7 @@ class Evaporate {
     })
   }
 
-  constructor(config: CreateConfig) {
+  constructor(config: EvaporateConfigInterface) {
     this.config = extend(
       {
         readableStreams: false,
@@ -142,7 +142,7 @@ class Evaporate {
         abortCompletionThrottlingMs: 1000
       },
       config
-    ) as CreateConfig
+    ) as EvaporateConfigInterface
 
     if (typeof window !== 'undefined' && window.console) {
       Global.l = {
