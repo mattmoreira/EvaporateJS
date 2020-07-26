@@ -4,4 +4,4 @@ interface DefaultLogger {
   e: Function
 }
 
-export type Logger = DefaultLogger & Partial<Console>
+export type LoggerInterface = DefaultLogger & Partial<Console>
