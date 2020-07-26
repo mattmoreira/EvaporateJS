@@ -8,8 +8,8 @@ class AwsSignatureV2 extends AwsSignature {
 
   stringToSign(): string {
     let x_amz_headers = ''
-    let result
-    const header_key_array = []
+    let result: string
+    const header_key_array: string[] = []
 
     for (const key in this.request.x_amz_headers) {
       if (this.request.x_amz_headers.hasOwnProperty(key)) {
