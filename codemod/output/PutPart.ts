@@ -4,7 +4,7 @@ import { PARTS_MONITOR_INTERVAL_MS, EVAPORATE_STATUS } from './Constants'
 import { getSupportedBlobSlice } from './Utils'
 import { Request } from './Types'
 import { FileUpload } from './FileUpload'
-import { S3Part, StartedS3Part, CompletedS3Part } from './FileS3PartInterface'
+import { S3Part, StartedS3Part, CompletedS3Part } from './S3PartInterface'
 
 type PartialSignedS3AWSRequest = new (fileUpload: FileUpload) => {
   [P in Exclude<

@@ -1,4 +1,4 @@
-import { FileUploadCallbacksInterface } from './FileUploadInterface'
+import { S3UploadCallbacksInterface } from './S3UploadCallbacksInterface'
 import { Dictionary } from './Types'
 
 interface UploadHeadersInterface {
@@ -15,6 +15,6 @@ interface UploadFileDataInterface {
   file: File
 }
 
-export type UploadFileConfig = FileUploadCallbacksInterface &
+export type UploadFileConfig = S3UploadCallbacksInterface &
   UploadHeadersInterface &
   UploadFileDataInterface

@@ -24,7 +24,7 @@ import {
   elementText
 } from './Utils'
 import Evaporate from './Evaporate'
-import { FileUploadInterface, FileUploadStats } from './FileUploadInterface'
+import { S3UploadInterface, S3UploadStatsInterface } from './S3UploadInterface'
 import { CreateConfig } from './EvaporateCreateConfigInterface'
 import {
   S3Part,
@@ -32,7 +32,7 @@ import {
   S3File,
   InitialS3Part,
   StartedS3Part
-} from './FileS3PartInterface'
+} from './S3PartInterface'
 import { UploadFileConfig } from './EvaporateUploadFileInterface'
 import { Defer, Dictionary } from './Types'
 
@@ -92,7 +92,7 @@ class FileUpload
   public beforeSigner?: (xhr: XMLHttpRequest, url: string) => void = () => {}
 
   public started: (file_key: string) => void = () => {}
-  public progress: (p: number, stats: FileUploadStats) => void = () => {}
+  public progress: (p: number, stats: S3UploadStatsInterface) => void = () => {}
   public paused: (file_key?: string) => void = () => {}
   public resumed: (file_key?: string) => void = () => {}
   public pausing: (file_key?: string) => void = () => {}
@@ -100,7 +100,7 @@ class FileUpload
   public complete: (
     xhr: XMLHttpRequest,
     awsObjectKey: string,
-    stats: FileUploadStats
+    stats: S3UploadStatsInterface
   ) => void = () => {}
 
   public info: (...msg: string[]) => void = () => {}
@@ -112,7 +112,7 @@ class FileUpload
     this.fileTotalBytesUploaded += loadedNow
   }
 
-  progessStats(): FileUploadStats {
+  progessStats(): S3UploadStatsInterface {
     // Adapted from https://github.com/fkjaekel
     // https://github.com/TTLabs/EvaporateJS/issues/13
     if (this.fileTotalBytesUploaded === 0) {
@@ -447,10 +447,10 @@ class FileUpload
     saveUpload(fileKey, newUpload)
   }
 
-  updateUploadFile(updates: Partial<FileUploadInterface>): void {
+  updateUploadFile(updates: Partial<S3UploadInterface>): void {
     const fileKey = uploadKey(this)
     const uploads = getSavedUploads()
-    const upload = extend({}, uploads[fileKey], updates) as FileUploadInterface
+    const upload = extend({}, uploads[fileKey], updates) as S3UploadInterface
     saveUpload(fileKey, upload)
   }
 
@@ -479,7 +479,7 @@ class FileUpload
 
   getUnfinishedFileUpload(): void {
     const savedUploads = getSavedUploads(true)
-    const u: FileUploadInterface = savedUploads[uploadKey(this)]
+    const u: S3UploadInterface = savedUploads[uploadKey(this)]
 
     if (this.canRetryUpload(u)) {
       this.uploadId = u.uploadId
@@ -490,7 +490,7 @@ class FileUpload
     }
   }
 
-  canRetryUpload(u: FileUploadInterface): boolean {
+  canRetryUpload(u: S3UploadInterface): boolean {
     // Must be the same file name, file size, last_modified, file type as previous upload
     if (typeof u === 'undefined') {
       return false
