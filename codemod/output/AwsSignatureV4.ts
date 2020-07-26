@@ -20,7 +20,7 @@ class AwsSignatureV4 extends AwsSignature {
   }
 
   authorizationString(): string {
-    const authParts = []
+    const authParts: string[] = []
     const credentials = this.credentialString()
     const headers = this.canonicalHeaders()
     authParts.push(
@@ -34,7 +34,7 @@ class AwsSignatureV4 extends AwsSignature {
   }
 
   stringToSign(): string {
-    const signParts = []
+    const signParts: string[] = []
     signParts.push('AWS4-HMAC-SHA256')
     signParts.push(this.request.dateString)
     signParts.push(this.credentialString())
@@ -45,7 +45,7 @@ class AwsSignatureV4 extends AwsSignature {
   }
 
   credentialString(): string {
-    const credParts = []
+    const credParts: string[] = []
     credParts.push(this.request.dateString.slice(0, 8))
     credParts.push(this.con.awsRegion)
     credParts.push('s3')
@@ -58,8 +58,10 @@ class AwsSignatureV4 extends AwsSignature {
     const search = uri([this.awsRequest.awsUrl, this.request.path, qs].join(''))
       .search
     const searchParts = search.length ? search.split('&') : []
-    const encoded = []
-    let nameValue
+
+    type EncodedQueryString = { name: string; value: string }
+    const encoded: EncodedQueryString[] = []
+    let nameValue: string | string[]
     let i
 
     for (i = 0; i < searchParts.length; i++) {
@@ -72,10 +74,7 @@ class AwsSignatureV4 extends AwsSignature {
     }
 
     const sorted = encoded.sort(
-      (
-        a: { name: string; value: string },
-        b: { name: string; value: string }
-      ) => {
+      (a: EncodedQueryString, b: EncodedQueryString) => {
         if (a.name < b.name) {
           return -1
         } else if (a.name > b.name) {
@@ -86,7 +85,7 @@ class AwsSignatureV4 extends AwsSignature {
       }
     )
 
-    const result = []
+    const result: string[] = []
 
     for (i = 0; i < sorted.length; i++) {
       nameValue = sorted[i].value
@@ -110,9 +109,9 @@ class AwsSignatureV4 extends AwsSignature {
     canonicalHeaders: string
     signedHeaders: string
   } {
-    const canonicalHeaders = []
-    const keys = []
-    let i
+    const canonicalHeaders: string[] = []
+    const keys: string[] = []
+    let i: number
 
     function addHeader(name: string, value: string) {
       const key = name.toLowerCase()
@@ -148,10 +147,10 @@ class AwsSignatureV4 extends AwsSignature {
       return 0
     })
 
-    const result = []
-    const unsigned_headers = []
+    const result: string[] = []
+    const unsigned_headers: string[] = []
     const not_signed = Object.keys(this.request.not_signed_headers) || []
-    const signed_headers = []
+    const signed_headers: string[] = []
 
     for (i = 0; i < not_signed.length; i++) {
       unsigned_headers.push(not_signed[i].toLowerCase())
@@ -177,7 +176,7 @@ class AwsSignatureV4 extends AwsSignature {
       return this._cr
     }
 
-    const canonParts = []
+    const canonParts: string[] = []
     canonParts.push(this.request.method)
 
     canonParts.push(
