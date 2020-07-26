@@ -63,5 +63,5 @@ type OverridableConfigKeys = Exclude<
   typeof IMMUTABLE_OPTIONS
 >
 
-export interface EvaporateOverrideConfigOptions
+export interface EvaporateOverrideConfigInterface
   extends Pick<EvaporateConfigInterface, OverridableConfigKeys> {}

@@ -20,7 +20,7 @@ import {
 
 import {
   EvaporateConfigInterface,
-  EvaporateOverrideConfigOptions
+  EvaporateOverrideConfigInterface
 } from './EvaporateConfigInterface'
 
 import { UploadFileConfig } from './EvaporateUploadFileInterface'
@@ -244,7 +244,7 @@ class Evaporate {
 
   add(
     uploadFileConfig: UploadFileConfig,
-    overrideEvaporateConfig?: EvaporateOverrideConfigOptions
+    overrideEvaporateConfig?: EvaporateOverrideConfigInterface
   ): Promise<string> {
     const self = this
     let evaporateConfig
