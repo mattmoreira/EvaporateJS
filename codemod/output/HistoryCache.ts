@@ -27,7 +27,7 @@ class HistoryCache {
     }
   }
 
-  constructor(mockLocalStorage) {
+  constructor(mockLocalStorage: boolean) {
     const supported = HistoryCache.supported()
     this.cacheStore = mockLocalStorage
       ? {}
