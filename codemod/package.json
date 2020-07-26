@@ -7,9 +7,7 @@
     "clean": "rm ./output/* || true",
     "start": "npm run collect-types",
     "codemod": "npm run clean && node src/index.js",
-    "build": "webpack --config webpack.config.build.js",
-    "collect-types": "webpack-dev-server --open --config webpack.config.types.js",
-    "apply-types": "typewiz applyTypes collected-types.json"
+    "build": "webpack --config webpack.config.build.js"
   },
   "author": "Matheus Moreira",
   "license": "MIT",
@@ -19,10 +17,6 @@
     "recast": "^0.18.5",
     "ts-loader": "^6.2.1",
     "typescript": "^3.8.3",
-    "typewiz": "^1.2.4",
-    "typewiz-core": "^1.2.4",
-    "typewiz-node": "^1.2.4",
-    "typewiz-webpack": "^1.2.4",
     "webpack": "^4.42.0",
     "webpack-bundle-analyzer": "^3.6.0",
     "webpack-cli": "^3.3.11",
