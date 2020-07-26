@@ -6,7 +6,7 @@ import { Request } from './Types'
 class ReuseS3Object extends SignedS3AWSRequestWithRetryLimit {
   public awsKey: string
 
-  constructor(fileUpload: FileUpload, awsKey) {
+  constructor(fileUpload: FileUpload, awsKey: string) {
     const request: Request = {
       method: 'HEAD',
       path: '',
