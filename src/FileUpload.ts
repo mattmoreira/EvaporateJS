@@ -56,7 +56,7 @@ class FileUpload
   public startTime: Date
   public status: EVAPORATE_STATUS = EVAPORATE_STATUS.PENDING
 
-  public progressInterval: NodeJS.Timeout
+  public progressInterval: number
   public uploadId: string
   public firstMd5Digest: string
   public eTag: string
@@ -275,7 +275,7 @@ class FileUpload
     if (force) {
       this.abortParts(true)
     } else {
-      promises = this.partsInProcess.map(function(p) {
+      promises = this.partsInProcess.map(function (p) {
         return this.s3Parts[p].awsRequest.awsDeferred.promise
       }, this)
 
@@ -303,7 +303,7 @@ class FileUpload
   }
 
   _startCompleteUpload(callComplete: boolean): () => void {
-    return function() {
+    return function () {
       const promise = callComplete ? this.completeUpload() : Promise.resolve()
       promise.then(this.deferredCompletion.resolve.bind(this))
     }

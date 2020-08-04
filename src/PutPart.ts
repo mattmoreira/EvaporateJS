@@ -27,7 +27,7 @@ class PutPart extends PartialSignedS3AWSRequest {
   public partNumber: number
   public start: number = 0
   public end: number = 0
-  public stalledInterval: NodeJS.Timeout = null
+  public stalledInterval: number = null
   public result: any
   static size: number
 
@@ -153,7 +153,7 @@ class PutPart extends PartialSignedS3AWSRequest {
     const lastLoaded = this.part.loadedBytes
     const self = this
 
-    return function() {
+    return function () {
       clearInterval(self.stalledInterval)
 
       if (
@@ -330,7 +330,7 @@ class PutPart extends PartialSignedS3AWSRequest {
       return new Promise(resolve => {
         const reader = new FileReader()
 
-        reader.onloadend = function() {
+        reader.onloadend = function () {
           resolve(this.result)
         }
 
