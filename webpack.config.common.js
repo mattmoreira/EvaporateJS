@@ -1,5 +1,5 @@
 module.exports = {
-  entry: './src/Evaporate.ts',
+  entry: './src/Evaporate/Evaporate.ts',
   module: {
     rules: [
       {

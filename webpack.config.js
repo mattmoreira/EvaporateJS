@@ -9,7 +9,7 @@ if (process.argv.includes('--analyze')) {
 }
 
 module.exports = {
-  entry: './src/Evaporate.ts',
+  entry: './src/Evaporate/Evaporate.ts',
   plugins,
   module: {
     rules: [
