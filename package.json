@@ -4,7 +4,9 @@
   "description": "Javascript library for browser to S3 multipart resumable uploads for browsers and with Node FileSystem (fs) Stream Support",
   "main": "dist/build.js",
   "directories": {
-    "example": "example"
+    "example": "example",
+    "test": "test",
+    "lib": "src"
   },
   "scripts": {
     "build": "webpack --config webpack.config.build.js",
