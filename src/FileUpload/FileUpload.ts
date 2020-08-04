@@ -1,12 +1,15 @@
 import { PutPart } from './PutPart'
-import { CompleteMultipartUpload } from './CompleteMultipartUpload'
-import { InitiateMultipartUpload } from './InitiateMultipartUpload'
-import { DeleteMultipartUpload } from './DeleteMultipartUpload'
-import { ResumeInterruptedUpload } from './ResumeInterruptedUpload'
+import { CompleteMultipartUpload } from '../MultipartUpload/CompleteMultipartUpload'
+import { InitiateMultipartUpload } from '../MultipartUpload/InitiateMultipartUpload'
+import { DeleteMultipartUpload } from '../MultipartUpload/DeleteMultipartUpload'
+import { ResumeInterruptedUpload } from '../AwsRequest/ResumeInterruptedUpload'
 import { ReuseS3Object } from './ReuseS3Object'
-import { Global } from './Global'
-import { FAR_FUTURE, ETAG_OF_0_LENGTH_BLOB } from './Constants'
-import { EVAPORATE_STATUS, ACTIVE_STATUSES } from './EvaporateStatusEnum'
+import { Global } from '../Global'
+import { FAR_FUTURE, ETAG_OF_0_LENGTH_BLOB } from '../Constants'
+import {
+  EVAPORATE_STATUS,
+  ACTIVE_STATUSES
+} from '../Evaporate/EvaporateStatusEnum'
 import {
   extend,
   defer,
@@ -18,10 +21,10 @@ import {
   getSavedUploads,
   removeUpload,
   elementText
-} from './Utils'
-import Evaporate from './Evaporate'
+} from '../Utils'
+import Evaporate from '../Evaporate/Evaporate'
 import { S3UploadInterface, S3UploadStatsInterface } from './S3UploadInterface'
-import { EvaporateConfigInterface } from './EvaporateConfigInterface'
+import { EvaporateConfigInterface } from '../Evaporate/EvaporateConfigInterface'
 import {
   S3Part,
   CompletedS3Part,
@@ -29,8 +32,8 @@ import {
   InitialS3Part,
   StartedS3Part
 } from './S3PartInterface'
-import { UploadFileConfig } from './EvaporateUploadFileInterface'
-import { Defer, Dictionary } from './Types'
+import { UploadFileConfig } from '../Evaporate/EvaporateUploadFileInterface'
+import { Defer, Dictionary } from '../Types'
 
 class FileUpload
   implements

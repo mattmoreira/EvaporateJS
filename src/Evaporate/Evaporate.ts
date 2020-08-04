@@ -1,8 +1,8 @@
-import { HistoryCache } from './HistoryCache'
-import { FileUpload } from './FileUpload'
-import { Global } from './Global'
+import { HistoryCache } from '../Utils/HistoryCache'
+import { FileUpload } from '../FileUpload/FileUpload'
+import { Global } from '../Global'
 
-import { IMMUTABLE_OPTIONS } from './Constants'
+import { IMMUTABLE_OPTIONS } from '../Constants'
 import {
   EVAPORATE_STATUS,
   ACTIVE_STATUSES,
@@ -16,7 +16,7 @@ import {
   readableFileSize,
   s3EncodedObjectName,
   getSupportedBlobSlice
-} from './Utils'
+} from '../Utils'
 
 import {
   EvaporateConfigInterface,
@@ -25,7 +25,7 @@ import {
 
 import { UploadFileConfig } from './EvaporateUploadFileInterface'
 import { EvaporateValidationEnum } from './EvaporateValidationEnum'
-import { Dictionary } from './Types'
+import { Dictionary } from '../Types'
 
 class Evaporate {
   public config: EvaporateConfigInterface = null

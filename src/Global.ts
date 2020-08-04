@@ -1,6 +1,6 @@
 import { noOpLogger } from './Utils'
-import { HistoryCache } from './HistoryCache'
-import { LoggerInterface } from './LoggerInterface'
+import { HistoryCache } from './Utils/HistoryCache'
+import { LoggerInterface } from './Utils/LoggerInterface'
 
 type Global = {
   HOURS_AGO: Date

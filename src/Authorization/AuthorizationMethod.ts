@@ -1,7 +1,7 @@
-import { SignedS3AWSRequest } from './SignedS3AWSRequest'
-import { FileUpload } from './FileUpload'
-import { Request, Dictionary } from './Types'
-import { EvaporateConfigInterface } from './EvaporateConfigInterface'
+import { SignedS3AWSRequest } from '../AwsRequest/SignedS3AWSRequest'
+import { FileUpload } from '../FileUpload/FileUpload'
+import { Request, Dictionary } from '../Types'
+import { EvaporateConfigInterface } from '../Evaporate/EvaporateConfigInterface'
 
 class AuthorizationMethod {
   fileUpload: FileUpload

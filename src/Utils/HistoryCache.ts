@@ -1,4 +1,4 @@
-import { Dictionary } from './Types'
+import { Dictionary } from '../Types'
 
 class HistoryCache {
   public cacheStore: Dictionary<string>

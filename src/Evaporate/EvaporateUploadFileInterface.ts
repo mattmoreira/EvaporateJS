@@ -1,5 +1,5 @@
-import { S3UploadCallbacksInterface } from './S3UploadCallbacksInterface'
-import { Dictionary } from './Types'
+import { S3UploadCallbacksInterface } from '../FileUpload/S3UploadCallbacksInterface'
+import { Dictionary } from '../Types'
 
 interface UploadHeadersInterface {
   xAmzHeadersAtInitiate: Dictionary<string>

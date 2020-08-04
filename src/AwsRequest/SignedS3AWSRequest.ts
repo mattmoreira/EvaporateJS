@@ -1,5 +1,5 @@
-import { Global } from './Global'
-import { EVAPORATE_STATUS } from './EvaporateStatusEnum'
+import { Global } from '../Global'
+import { EVAPORATE_STATUS } from '../Evaporate/EvaporateStatusEnum'
 import {
   defer,
   awsUrl,
@@ -8,13 +8,13 @@ import {
   signingVersion,
   getAwsResponse,
   authorizationMethod
-} from './Utils'
-import { FileUpload } from './FileUpload'
+} from '../Utils'
+import { FileUpload } from '../FileUpload/FileUpload'
 
-import { AwsSignatureV2 } from './AwsSignatureV2'
-import { AwsSignatureV4 } from './AwsSignatureV4'
-import { Defer, Request, Dictionary } from './Types'
-import { EvaporateConfigInterface } from './EvaporateConfigInterface'
+import { AwsSignatureV2 } from '../AwsSignature/AwsSignatureV2'
+import { AwsSignatureV4 } from '../AwsSignature/AwsSignatureV4'
+import { Defer, Request, Dictionary } from '../Types'
+import { EvaporateConfigInterface } from '../Evaporate/EvaporateConfigInterface'
 
 class SignedS3AWSRequest {
   public fileUpload: FileUpload

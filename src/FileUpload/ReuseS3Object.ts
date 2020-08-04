@@ -1,6 +1,6 @@
-import { SignedS3AWSRequestWithRetryLimit } from './SignedS3AWSRequestWithRetryLimit'
+import { SignedS3AWSRequestWithRetryLimit } from '../AwsRequest/SignedS3AWSRequestWithRetryLimit'
 import { FileUpload } from './FileUpload'
-import { Request } from './Types'
+import { Request } from '../Types'
 
 //http://docs.amazonwebservices.com/AmazonS3/latest/API/mpUploadComplete.html
 class ReuseS3Object extends SignedS3AWSRequestWithRetryLimit {

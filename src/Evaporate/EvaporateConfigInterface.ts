@@ -1,6 +1,6 @@
 import Evaporate from './Evaporate'
-import { IMMUTABLE_OPTIONS } from './Constants'
-import { Dictionary } from './Types'
+import { IMMUTABLE_OPTIONS } from '../Constants'
+import { Dictionary } from '../Types'
 
 export interface EvaporateConfigInterface {
   readableStreams?: boolean

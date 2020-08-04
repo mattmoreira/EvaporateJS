@@ -1,7 +1,7 @@
-import { CancelableS3AWSRequest } from './CancelableS3AWSRequest'
-import { Global } from './Global'
-import { Request } from './Types'
-import { FileUpload } from './FileUpload'
+import { CancelableS3AWSRequest } from '../AwsRequest/CancelableS3AWSRequest'
+import { Global } from '../Global'
+import { Request } from '../Types'
+import { FileUpload } from '../FileUpload/FileUpload'
 
 // see: http://docs.amazonwebservices.com/AmazonS3/latest/API/mpUploadInitiate.html
 class InitiateMultipartUpload extends CancelableS3AWSRequest {

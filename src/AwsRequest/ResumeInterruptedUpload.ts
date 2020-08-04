@@ -1,6 +1,6 @@
 import { SignedS3AWSRequestWithRetryLimit } from './SignedS3AWSRequestWithRetryLimit'
-import { Global } from './Global'
-import { Request } from './Types'
+import { Global } from '../Global'
+import { Request } from '../Types'
 
 //http://docs.amazonwebservices.com/AmazonS3/latest/API/mpUploadListParts.html
 class ResumeInterruptedUpload extends SignedS3AWSRequestWithRetryLimit {

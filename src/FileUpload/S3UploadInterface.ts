@@ -1,4 +1,4 @@
-import { Dictionary } from './Types'
+import { Dictionary } from '../Types'
 
 export interface S3UploadStatsInterface {
   speed: number

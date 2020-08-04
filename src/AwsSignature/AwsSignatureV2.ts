@@ -1,5 +1,5 @@
 import { AwsSignature } from './AwsSignature'
-import { Global } from './Global'
+import { Global } from '../Global'
 
 class AwsSignatureV2 extends AwsSignature {
   authorizationString(): string {

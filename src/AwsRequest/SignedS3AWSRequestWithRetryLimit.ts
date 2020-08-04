@@ -1,7 +1,7 @@
 import { CancelableS3AWSRequest } from './CancelableS3AWSRequest'
-import { Global } from './Global'
-import { Request } from './Types'
-import { FileUpload } from './FileUpload'
+import { Global } from '../Global'
+import { Request } from '../Types'
+import { FileUpload } from '../FileUpload/FileUpload'
 
 class SignedS3AWSRequestWithRetryLimit extends CancelableS3AWSRequest {
   public maxRetries: number = 1

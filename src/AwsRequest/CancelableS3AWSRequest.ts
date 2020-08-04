@@ -1,5 +1,5 @@
 import { SignedS3AWSRequest } from './SignedS3AWSRequest'
-import { EVAPORATE_STATUS } from './EvaporateStatusEnum'
+import { EVAPORATE_STATUS } from '../Evaporate/EvaporateStatusEnum'
 
 class CancelableS3AWSRequest extends SignedS3AWSRequest {
   errorExceptionStatus(): boolean {
