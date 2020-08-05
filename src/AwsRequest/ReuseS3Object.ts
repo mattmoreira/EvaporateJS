@@ -1,5 +1,5 @@
-import { SignedS3AWSRequestWithRetryLimit } from '../AwsRequest/SignedS3AWSRequestWithRetryLimit'
-import { FileUpload } from './FileUpload'
+import { SignedS3AWSRequestWithRetryLimit } from './SignedS3AWSRequestWithRetryLimit'
+import { FileUpload } from '../FileUpload/FileUpload'
 import { Request } from '../Types'
 
 //http://docs.amazonwebservices.com/AmazonS3/latest/API/mpUploadComplete.html

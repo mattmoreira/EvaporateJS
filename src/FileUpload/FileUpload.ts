@@ -3,7 +3,7 @@ import { InitiateMultipartUpload } from '../AwsRequest/MultipartUpload/InitiateM
 import { DeleteMultipartUpload } from '../AwsRequest/MultipartUpload/DeleteMultipartUpload'
 import { ResumeInterruptedUpload } from '../AwsRequest/ResumeInterruptedUpload'
 import { PutPart } from '../AwsRequest/PutPart'
-import { ReuseS3Object } from './ReuseS3Object'
+import { ReuseS3Object } from '../AwsRequest/ReuseS3Object'
 import { Global } from '../Global'
 import { FAR_FUTURE, ETAG_OF_0_LENGTH_BLOB } from '../Constants'
 import {
