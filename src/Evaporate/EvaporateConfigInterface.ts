@@ -1,6 +1,7 @@
 import Evaporate from './Evaporate'
 import { IMMUTABLE_OPTIONS } from '../Constants'
 import { Dictionary } from '../Types'
+import { FileUploadCentral } from '../FileUpload/FileUploadCentral'
 
 export interface EvaporateConfigInterface {
   readableStreams?: boolean
@@ -54,7 +55,10 @@ export interface EvaporateConfigInterface {
       ) => Promise<string>)
   xhrWithCredentials?: boolean
   localTimeOffset?: number
-  evaporateChanged?: (evaporate: Evaporate, evaporatingCount: number) => void
+  evaporateChanged?: (
+    fileUploadCentral: FileUploadCentral,
+    evaporatingCount: number
+  ) => void
   abortCompletionThrottlingMs?: number
 }
 

@@ -33,7 +33,7 @@ class SignedS3AWSRequest {
   constructor(fileUpload: FileUpload, request?: Request) {
     this.fileUpload = fileUpload
     this.con = fileUpload.con
-    this.localTimeOffset = this.fileUpload.localTimeOffset
+    this.localTimeOffset = this.fileUpload.fileUploadCentral.evaporate.localTimeOffset
     this.awsDeferred = defer()
     this.started = defer()
     this.awsUrl = awsUrl(this.con)

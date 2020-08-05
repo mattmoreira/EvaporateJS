@@ -34,12 +34,10 @@ import {
 } from './S3PartInterface'
 import { UploadFileConfig } from '../Evaporate/EvaporateUploadFileInterface'
 import { Defer, Dictionary } from '../Types'
+import { FileUploadCentral } from './FileUploadCentral'
 
 class FileUpload
-  implements
-    UploadFileConfig,
-    Pick<Evaporate, 'localTimeOffset'>,
-    Pick<EvaporateConfigInterface, 'signParams'> {
+  implements UploadFileConfig, Pick<EvaporateConfigInterface, 'signParams'> {
   public fileTotalBytesUploaded: number = 0
   public s3Parts: S3Part[]
   public partsOnS3: S3File[] = []
@@ -47,8 +45,6 @@ class FileUpload
   public partsToUpload: number[] = []
   public numParts: number = -1
   public con: EvaporateConfigInterface
-  public evaporate: Evaporate
-  public localTimeOffset: number = 0
   public deferredCompletion: Defer<void>
   public id: string
   public name: string
@@ -73,11 +69,9 @@ class FileUpload
   constructor(
     file: UploadFileConfig,
     con: EvaporateConfigInterface,
-    evaporate: Evaporate
+    public fileUploadCentral: FileUploadCentral
   ) {
     this.con = extend({}, con) as EvaporateConfigInterface
-    this.evaporate = evaporate
-    this.localTimeOffset = evaporate.localTimeOffset
     this.deferredCompletion = defer()
     extend(this, file)
     this.id = decodeURIComponent(`${this.con.bucket}/${this.name}`)
@@ -180,21 +174,8 @@ class FileUpload
     clearInterval(this.progressInterval)
   }
 
-  // Evaporate proxies
-  startNextFile(reason: string): void {
-    this.evaporate.startNextFile(reason)
-  }
-
-  evaporatingCnt(incr: number): void {
-    this.evaporate.evaporatingCnt(incr)
-  }
-
-  consumeRemainingSlots(): void {
-    this.evaporate.consumeRemainingSlots()
-  }
-
   getRemainingSlots(): number {
-    let evapCount = this.evaporate.evaporatingCount
+    let evapCount = this.fileUploadCentral.evaporatingCount
 
     if (!this.partsInProcess.length && evapCount > 0) {
       // we can use our file slot
@@ -288,7 +269,7 @@ class FileUpload
     return Promise.all(promises).then(() => {
       this.stopMonitor()
       this.status = EVAPORATE_STATUS.PAUSED
-      this.startNextFile('pause')
+      this.fileUploadCentral.startNextFile('pause')
       this.paused()
     })
   }
@@ -300,7 +281,7 @@ class FileUpload
 
   done(): void {
     clearInterval(this.progressInterval)
-    this.startNextFile('file done')
+    this.fileUploadCentral.startNextFile('file done')
     this.partsOnS3 = []
     this.s3Parts = []
   }
@@ -341,7 +322,7 @@ class FileUpload
         removeAtIndex(self.partsInProcess, s3Part.partNumber)
 
         if (self.partsToUpload.length) {
-          self.evaporatingCnt(-1)
+          this.fileUploadCentral.evaporatingCnt(-1)
         }
       }
     })
@@ -357,7 +338,7 @@ class FileUpload
       removeAtIndex(self.partsInProcess, s3Part.partNumber)
 
       if (self.partsToUpload.length) {
-        self.evaporatingCnt(-1)
+        self.fileUploadCentral.evaporatingCnt(-1)
       }
     }
 
@@ -366,11 +347,11 @@ class FileUpload
         cleanUpAfterPart(s3Part)
 
         if (self.partsToUpload.length) {
-          self.consumeRemainingSlots()
+          self.fileUploadCentral.consumeRemainingSlots()
         }
 
         if (self.partsToUpload.length < self.con.maxConcurrentParts) {
-          self.startNextFile('part resolve')
+          self.fileUploadCentral.startNextFile('part resolve')
         }
       }
     }
@@ -657,7 +638,7 @@ class FileUpload
 
         if (this.canStartPart(s3Part)) {
           if (this.partsInProcess.length && this.partsToUpload.length > 1) {
-            this.evaporatingCnt(+1)
+            this.fileUploadCentral.evaporatingCnt(+1)
           }
 
           this.partsInProcess.push(s3Part.partNumber)
@@ -681,7 +662,7 @@ class FileUpload
 
       if (allInProcess && remainingSlots > 0) {
         // We don't need any more slots...
-        this.startNextFile('consume slots')
+        this.fileUploadCentral.startNextFile('consume slots')
       }
 
       return remainingSlots
