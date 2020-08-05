@@ -1,7 +1,7 @@
-import { SignedS3AWSRequest } from '../AwsRequest/SignedS3AWSRequest'
-import { Global } from '../Global'
-import { EVAPORATE_STATUS } from '../Evaporate/EvaporateStatusEnum'
-import { Request } from '../Types'
+import { SignedS3AWSRequest } from '../SignedS3AWSRequest'
+import { Global } from '../../Global'
+import { EVAPORATE_STATUS } from '../../Evaporate/EvaporateStatusEnum'
+import { Request } from '../../Types'
 
 const maxRetries = 1
 

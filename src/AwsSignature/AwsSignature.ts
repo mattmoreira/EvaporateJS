@@ -2,7 +2,7 @@ import { EvaporateConfigInterface } from '../Evaporate/EvaporateConfigInterface'
 import { Request } from '../Types'
 import { SignedS3AWSRequest } from '../AwsRequest/SignedS3AWSRequest'
 import { PutPart } from '../AwsRequest/PutPart'
-import { CompleteMultipartUpload } from '../MultipartUpload/CompleteMultipartUpload'
+import { CompleteMultipartUpload } from '../AwsRequest/MultipartUpload/CompleteMultipartUpload'
 
 class AwsSignature {
   request: Request

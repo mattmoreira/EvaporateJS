@@ -1,6 +1,6 @@
-import { CancelableS3AWSRequest } from '../AwsRequest/CancelableS3AWSRequest'
-import { Request } from '../Types'
-import { FileUpload } from '../FileUpload/FileUpload'
+import { CancelableS3AWSRequest } from '../CancelableS3AWSRequest'
+import { Request } from '../../Types'
+import { FileUpload } from '../../FileUpload/FileUpload'
 
 type PartialCancelableS3AWSRequest = new (
   fileUpload: FileUpload,
