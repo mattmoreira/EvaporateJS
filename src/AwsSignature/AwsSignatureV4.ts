@@ -1,7 +1,7 @@
 import { AwsSignature } from './AwsSignature'
 import { uri, awsUrl } from '../Utils'
 import { Global } from '../Global'
-import { PutPart } from '../FileUpload/PutPart'
+import { PutPart } from '../AwsRequest/PutPart'
 
 class AwsSignatureV4 extends AwsSignature {
   public _cr: string

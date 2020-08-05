@@ -1,11 +1,15 @@
-import { SignedS3AWSRequest } from '../AwsRequest/SignedS3AWSRequest'
+import { SignedS3AWSRequest } from './SignedS3AWSRequest'
 import { Global } from '../Global'
 import { PARTS_MONITOR_INTERVAL_MS } from '../Constants'
 import { EVAPORATE_STATUS } from '../Evaporate/EvaporateStatusEnum'
 import { getSupportedBlobSlice } from '../Utils'
 import { Request } from '../Types'
-import { FileUpload } from './FileUpload'
-import { S3Part, StartedS3Part, CompletedS3Part } from './S3PartInterface'
+import { FileUpload } from '../FileUpload/FileUpload'
+import {
+  S3Part,
+  StartedS3Part,
+  CompletedS3Part
+} from '../FileUpload/S3PartInterface'
 
 type PartialSignedS3AWSRequest = new (fileUpload: FileUpload) => {
   [P in Exclude<

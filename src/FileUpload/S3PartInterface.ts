@@ -1,4 +1,4 @@
-import { PutPart } from './PutPart'
+import { PutPart } from '../AwsRequest/PutPart'
 import { EVAPORATE_STATUS } from '../Evaporate/EvaporateStatusEnum'
 
 interface S3PartDetail {
