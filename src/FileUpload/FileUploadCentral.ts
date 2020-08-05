@@ -16,10 +16,7 @@ import { Global } from '../Global'
 import { FileUpload } from './FileUpload'
 import { Dictionary } from '../Types'
 
-import {
-  EvaporateConfigInterface,
-  EvaporateOverrideConfigInterface
-} from '../Evaporate/EvaporateConfigInterface'
+import { EvaporateOverrideConfigInterface } from '../Evaporate/EvaporateConfigInterface'
 
 import { UploadFileConfig } from '../Evaporate/EvaporateUploadFileInterface'
 import Evaporate from '../Evaporate/Evaporate'
