@@ -41,7 +41,7 @@ class FileUpload
     Pick<Evaporate, 'localTimeOffset'>,
     Pick<EvaporateConfigInterface, 'signParams'> {
   public fileTotalBytesUploaded: number = 0
-  public s3Parts: S3Part[]
+  public s3Parts: S3Part[] = []
   public partsOnS3: S3File[] = []
   public partsInProcess: number[] = []
   public partsToUpload: number[] = []
