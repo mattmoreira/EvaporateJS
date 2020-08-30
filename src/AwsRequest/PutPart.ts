@@ -52,6 +52,7 @@ class PutPart extends PartialSignedS3AWSRequest {
       step: `upload #${this.partNumber}`,
       x_amz_headers:
         fileUpload.xAmzHeadersCommon || fileUpload.xAmzHeadersAtUpload,
+      contentType: fileUpload.contentType,
       contentSha256: 'UNSIGNED-PAYLOAD',
       onProgress: this.onProgress.bind(this)
     }
